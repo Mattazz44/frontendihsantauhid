@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan - Pendidik</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-dark: #054a5c;
+            --primary-light: #0d6b82;
+            --bg-body: #e6eff2;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --danger-color: #dc2626;
+            --danger-bg: #fee2e2;
+            --input-bg: #f8fafc;
+            --border-color: #e2e8f0;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- Layout & Sidebar --- */
+        .wrapper { display: flex; min-height: 100vh; }
+
+        /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 1000;
+        }
+        .sidebar-brand {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: white; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .brand-icon img { width: 30px; }
+        .brand-text { font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
+        .brand-sub { font-size: 0.7rem; color: #a5c6cf; font-weight: 400; }
+        
+        .nav-menu { padding: 10px 15px; list-style: none; margin: 0; flex-grow: 1; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link {
+            color: #c0d8de;
+            padding: 12px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); color: white; }
+        .nav-link.active { background-color: rgba(255,255,255,0.15); color: white; }
+        
+        .sidebar-footer { padding: 20px; }
+        .logout-link {
+            color: #c0d8de; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: 0.2s;
+        }
+        .logout-link:hover { color: white; }
+        
+        /* State Aktif untuk Pengaturan */
+        .nav-link.active { background-color: rgba(255,255,255,0.15); color: white; border-left: 4px solid #82c8d2; padding-left: 12px;}
+        
+        .sidebar-footer { padding: 20px; }
+        .logout-link { color: #c0d8de; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: 0.2s; }
+        .logout-link:hover { color: white; }
+
+        /* --- Main Content & Top Header --- */
+        .main-content { flex-grow: 1; margin-left: 260px; padding: 0; display: flex; flex-direction: column; }
+
+        .top-header { padding: 15px 40px; display: flex; justify-content: flex-end; align-items: center; gap: 24px; border-bottom: 1px solid transparent;}
+        .notif-bell { font-size: 1.2rem; color: var(--primary-dark); cursor: pointer; position: relative; }
+        .notif-dot { position: absolute; top: 0px; right: 0px; width: 8px; height: 8px; background-color: var(--danger-color); border-radius: 50%; border: 2px solid var(--bg-body); }
+        .user-profile-header { display: flex; align-items: center; gap: 12px; text-align: right;}
+        .user-name-sm { font-weight: 700; font-size: 0.9rem; color: var(--primary-dark); line-height: 1.1; }
+        .user-nip-sm { font-size: 0.7rem; color: var(--text-muted); }
+        .user-avatar-sm { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+        /* --- Dashboard Body --- */
+        .dashboard-body { padding: 10px 40px 40px 40px; max-width: 1100px; margin: 0 auto; width: 100%;}
+        
+        /* Page Header */
+        .page-title { font-weight: 700; color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 5px; }
+        .page-sub { color: var(--text-muted); font-size: 0.95rem; margin-bottom: 25px;}
+
+        /* --- Settings Cards --- */
+        .settings-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+            opacity: 0; /* Untuk animasi awal */
+            transform: translateY(15px);
+        }
+        .settings-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+        
+        .card-animate { opacity: 1; transform: translateY(0); }
+
+        .card-header-custom {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 24px;
+        }
+        .icon-box {
+            width: 48px;
+            height: 48px;
+            background-color: var(--primary-dark);
+            color: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            flex-shrink: 0;
+        }
+        .card-title-main { font-size: 1.15rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 2px; }
+        .card-subtitle { font-size: 0.8rem; color: var(--text-muted); }
+
+        /* Form Inputs & Buttons */
+        .form-label-custom { font-size: 0.85rem; font-weight: 600; color: var(--primary-dark); margin-bottom: 8px;}
+        .form-control-custom {
+            background-color: var(--input-bg);
+            border: 1px solid var(--input-bg);
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            transition: all 0.2s;
+        }
+        .form-control-custom:focus {
+            background-color: white;
+            border-color: #cbd5e1;
+            box-shadow: none;
+        }
+        
+        .btn-update {
+            background-color: var(--primary-dark);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            float: right;
+            transition: 0.2s;
+        }
+        .btn-update:hover { background-color: #033a47; color: white; }
+
+        /* Bahasa Option */
+        .language-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--input-bg);
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+        .lang-left { display: flex; align-items: center; gap: 10px; font-weight: 600; font-size: 0.95rem; }
+        .lang-left i { color: var(--text-muted); font-size: 1.2rem; }
+        .btn-link-custom { color: var(--primary-dark); text-decoration: none; font-weight: 700; font-size: 0.85rem; }
+        .btn-link-custom:hover { text-decoration: underline; }
+        
+        .timezone-text { font-size: 0.75rem; color: var(--text-muted); margin-top: auto; }
+
+        /* Notifikasi Toggles */
+        .notif-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .notif-item:last-child { border-bottom: none; padding-bottom: 0; }
+        .notif-info { display: flex; align-items: center; gap: 15px; }
+        .notif-icon { color: var(--text-muted); font-size: 1.2rem; }
+        .notif-text-title { font-weight: 600; font-size: 0.95rem; color: var(--primary-dark); margin-bottom: 2px;}
+        .notif-text-sub { font-size: 0.8rem; color: var(--text-muted); }
+        
+        /* Custom Switch */
+        .form-switch .form-check-input {
+            width: 2.5em; height: 1.25em; cursor: pointer;
+        }
+        .form-switch .form-check-input:checked {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        /* Privasi & Data */
+        .privacy-box { background-color: var(--input-bg); padding: 16px; border-radius: 12px; margin-bottom: 20px;}
+        .privacy-title { font-weight: 600; font-size: 0.95rem; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+        .privacy-title i { color: var(--primary-dark); }
+        .privacy-desc { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 15px; }
+        
+        .pill-toggle {
+            background-color: #e2e8f0;
+            display: inline-flex;
+            padding: 4px;
+            border-radius: 20px;
+        }
+        .pill-btn {
+            border: none; background: transparent; padding: 6px 18px; border-radius: 16px;
+            font-size: 0.8rem; font-weight: 700; color: var(--text-muted); transition: 0.2s;
+        }
+        .pill-btn.active { background-color: var(--primary-dark); color: white; }
+
+        .danger-zone {
+            display: flex; justify-content: space-between; align-items: center;
+            padding-top: 15px; border-top: 1px solid var(--border-color); margin-top: auto;
+        }
+        .danger-text-title { color: var(--danger-color); font-weight: 600; font-size: 0.9rem; margin-bottom: 2px;}
+        .danger-text-sub { font-size: 0.75rem; color: var(--text-muted); }
+        .btn-delete {
+            background-color: var(--danger-bg); color: var(--danger-color);
+            border: 1px solid #fca5a5; padding: 6px 16px; border-radius: 8px;
+            font-size: 0.8rem; font-weight: 600; transition: 0.2s;
+        }
+        .btn-delete:hover { background-color: #fecaca; }
+
+        /* --- Help Banner --- */
+        .help-banner {
+            background: linear-gradient(135deg, #8cbcc7 0%, #aed3db 100%);
+            border-radius: 16px;
+            padding: 30px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.5s ease;
+        }
+        .help-banner-content h3 { font-size: 1.3rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 8px; }
+        .help-banner-content p { font-size: 0.95rem; color: #033a47; margin-bottom: 0; max-width: 400px; }
+        .btn-help {
+            background-color: white;
+            color: var(--primary-dark);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            transition: 0.2s;
+        }
+        .btn-help:hover { transform: translateY(-2px); box-shadow: 0 6px 12px rgba(0,0,0,0.1); }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .sidebar { transform: translateX(-100%); transition: 0.3s; }
+            .main-content { margin-left: 0; }
+        }
+        @media (max-width: 768px) {
+            .help-banner { flex-direction: column; text-align: center; gap: 20px; padding: 25px 20px; }
+            .help-banner-content p { max-width: 100%; }
+            .dashboard-body { padding: 10px 20px 40px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <img src="../gambar/yayasan ihsan tauhid.png" alt="Logo" class="sidebar-logo">
+            </div>
+            <div>
+                <div class="brand-text">Ihsan Tauhid</div>
+                <div class="brand-sub">Management System</div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-file-earmark-text"></i> Dokumen</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-bell"></i> Notifikasi</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active"><i class="bi bi-gear-fill"></i> Pengaturan</a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="logout-link"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="notif-bell">
+                <i class="bi bi-bell"></i>
+                <span class="notif-dot"></span>
+            </div>
+            <div class="user-profile-header">
+                <div>
+                    <div class="user-name-sm">kylian mbappe</div>
+                    <div class="user-nip-sm">NIP: 19850312010111</div>
+                </div>
+                <img src="/gambar/Dictator mbappe.jpg" alt="User" class="user-avatar-sm">
+            </div>
+        </header>
+
+        <div class="dashboard-body">
+            
+            <div class="fade-in-header" style="opacity: 0; transform: translateY(10px); transition: all 0.5s;">
+                <h1 class="page-title">Pengaturan Akun</h1>
+                <p class="page-sub">Kelola keamanan dan preferensi personal Anda.</p>
+            </div>
+
+            <div class="row g-4">
+                
+                <div class="col-lg-7">
+                    <div class="settings-card">
+                        <div class="card-header-custom">
+                            <div class="icon-box">
+                                <i class="bi bi-shield-lock-fill"></i>
+                            </div>
+                            <div>
+                                <div class="card-title-main">Keamanan Akun</div>
+                                <div class="card-subtitle">Terakhir diubah: 3 bulan yang lalu</div>
+                            </div>
+                        </div>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Password Saat Ini</label>
+                                <input type="password" class="form-control form-control-custom" value="12345678" readonly>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label-custom">Password Baru</label>
+                                <input type="password" class="form-control form-control-custom" placeholder="Min. 8 karakter">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-auto text-end">
+                            <button class="btn btn-update">Perbarui Password</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-5">
+                    <div class="settings-card">
+                        <div class="card-header-custom mb-3">
+                            <div class="icon-box" style="background-color: #e6f0f3; color: var(--primary-dark);">
+                                <i class="bi bi-globe2"></i>
+                            </div>
+                            <div>
+                                <div class="card-title-main">Bahasa</div>
+                            </div>
+                        </div>
+                        
+                        <div class="language-option">
+                            <div class="lang-left">
+                                <i class="bi bi-translate"></i> Indonesia
+                            </div>
+                            <a href="#" class="btn-link-custom">Ubah</a>
+                        </div>
+                        
+                        <div class="timezone-text">
+                            Zona Waktu: (GMT+07:00) Jakarta
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="settings-card">
+                        <div class="card-header-custom">
+                            <div class="icon-box">
+                                <i class="bi bi-bell-fill"></i>
+                            </div>
+                            <div>
+                                <div class="card-title-main">Preferensi Notifikasi</div>
+                            </div>
+                        </div>
+
+                        <div class="notif-item">
+                            <div class="notif-info">
+                                <i class="bi bi-envelope notif-icon"></i>
+                                <div>
+                                    <div class="notif-text-title">Email Notifikasi</div>
+                                    <div class="notif-text-sub">Laporan mingguan & tugas baru</div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch" checked>
+                            </div>
+                        </div>
+
+                        <div class="notif-item mt-2">
+                            <div class="notif-info">
+                                <i class="bi bi-phone-vibrate notif-icon"></i>
+                                <div>
+                                    <div class="notif-text-title">Push Notifikasi</div>
+                                    <div class="notif-text-sub">Pesan instan & alert sistem</div>
+                                </div>
+                            </div>
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="settings-card">
+                        <div class="card-header-custom mb-3">
+                            <div class="icon-box">
+                                <i class="bi bi-person-fill-lock"></i>
+                            </div>
+                            <div>
+                                <div class="card-title-main">Privasi & Data</div>
+                            </div>
+                        </div>
+
+                        <div class="privacy-box">
+                            <div class="privacy-title"><i class="bi bi-eye-fill"></i> Visibilitas Profil</div>
+                            <div class="privacy-desc">Tampilkan profil Anda ke pendidik lain dalam jaringan.</div>
+                            <div class="pill-toggle">
+                                <button class="pill-btn active">Publik</button>
+                                <button class="pill-btn">Privat</button>
+                            </div>
+                        </div>
+
+                        <div class="danger-zone">
+                            <div>
+                                <div class="danger-text-title">Hapus Akun</div>
+                                <div class="danger-text-sub">Permanen menghapus semua data Anda.</div>
+                            </div>
+                            <button class="btn btn-delete">Hapus</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="help-banner" id="helpBanner">
+                        <div class="help-banner-content">
+                            <h3>Punya pertanyaan?</h3>
+                            <p>Bantuan teknis kami tersedia 24/7 untuk mendukung aktivitas mengajar Anda.</p>
+                        </div>
+                        <button class="btn btn-help">
+                            <i class="bi bi-headset"></i> Hubungi Pusat Bantuan
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Script Animasi Load In
+    document.addEventListener("DOMContentLoaded", function() {
+        // Header Animasi
+        setTimeout(() => {
+            const header = document.querySelector('.fade-in-header');
+            header.style.opacity = '1';
+            header.style.transform = 'translateY(0)';
+        }, 100);
+
+        // Cards Animasi Berurutan
+        const cards = document.querySelectorAll('.settings-card');
+        cards.forEach((card, index) => {
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 200 + (index * 150));
+        });
+
+        // Banner Animasi
+        setTimeout(() => {
+            const banner = document.getElementById('helpBanner');
+            banner.style.opacity = '1';
+            banner.style.transform = 'translateY(0)';
+        }, 800);
+        
+        // Toggle Pill Script (Publik/Privat)
+        const pillBtns = document.querySelectorAll('.pill-btn');
+        pillBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                pillBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pusat Notifikasi - Pendidik</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary-dark: #054a5c;
+            --primary-light: #0d6b82;
+            --bg-body: #e6eff2;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --text-dim: #94a3b8;
+            --danger-color: #dc2626;
+            --danger-bg: #fee2e2;
+            --info-color: #0284c7;
+            --info-bg: #e0f2fe;
+            --sys-color: #64748b;
+            --sys-bg: #f1f5f9;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--text-main);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        /* --- Layout & Sidebar --- */
+        .wrapper { display: flex; min-height: 100vh; }
+
+         /* --- Sidebar --- */
+        .sidebar {
+            width: 260px;
+            background-color: var(--primary-dark);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 1000;
+        }
+        .sidebar-brand {
+            padding: 24px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .brand-icon {
+            width: 40px; height: 40px;
+            background: white; border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .brand-icon img { width: 30px; }
+        .brand-text { font-weight: 700; font-size: 1.1rem; line-height: 1.2; }
+        .brand-sub { font-size: 0.7rem; color: #a5c6cf; font-weight: 400; }
+        
+        .nav-menu { padding: 10px 15px; list-style: none; margin: 0; flex-grow: 1; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link {
+            color: #c0d8de;
+            padding: 12px 16px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); color: white; }
+        .nav-link.active { background-color: rgba(255,255,255,0.15); color: white; }
+        
+        .sidebar-footer { padding: 20px; }
+        .logout-link {
+            color: #c0d8de; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: 0.2s;
+        }
+        .logout-link:hover { color: white; }
+        /* State Aktif untuk Notifikasi */
+        .nav-link.active { background-color: rgba(255,255,255,0.15); color: white; border-left: 4px solid #82c8d2; padding-left: 12px;}
+        
+        .sidebar-footer { padding: 20px; }
+        .logout-link { color: #c0d8de; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 500; transition: 0.2s; }
+        .logout-link:hover { color: white; }
+
+        /* --- Main Content & Top Header --- */
+        .main-content { flex-grow: 1; margin-left: 260px; padding: 0; display: flex; flex-direction: column; }
+
+        .top-header { padding: 15px 40px; display: flex; justify-content: flex-end; align-items: center; gap: 24px; border-bottom: 1px solid transparent;}
+        .notif-bell { font-size: 1.2rem; color: var(--primary-dark); cursor: pointer; position: relative; }
+        .notif-dot { position: absolute; top: 0px; right: 0px; width: 8px; height: 8px; background-color: var(--danger-color); border-radius: 50%; border: 2px solid var(--bg-body); }
+        .user-profile-header { display: flex; align-items: center; gap: 12px; text-align: right;}
+        .user-name-sm { font-weight: 700; font-size: 0.9rem; color: var(--primary-dark); line-height: 1.1; }
+        .user-nip-sm { font-size: 0.7rem; color: var(--text-muted); }
+        .user-avatar-sm { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+
+        /* --- Dashboard Body --- */
+        .dashboard-body { padding: 10px 40px 40px 40px; max-width: 1100px; margin: 0 auto; width: 100%;}
+        
+        /* Header Notifikasi */
+        .page-title { font-weight: 700; color: var(--primary-dark); font-size: 1.8rem; margin-bottom: 5px; }
+        .page-sub { color: var(--text-muted); font-size: 0.95rem; }
+        
+        .header-actions { display: flex; gap: 12px; align-items: center; }
+        .btn-outline-custom {
+            background: transparent; border: 1px solid #cbd5e1; color: var(--text-main);
+            padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: 0.2s;
+        }
+        .btn-outline-custom:hover { background-color: rgba(0,0,0,0.03); }
+        
+        .btn-primary-custom {
+            background-color: var(--primary-dark); color: white; border: none;
+            padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; transition: 0.2s;
+        }
+        .btn-primary-custom:hover { background-color: #033a47; color: white; }
+
+        /* --- List Notifikasi --- */
+        .notif-group { margin-top: 30px; opacity: 0; transform: translateY(15px); transition: opacity 0.5s ease, transform 0.5s ease; }
+        .notif-group.show-animate { opacity: 1; transform: translateY(0); }
+        
+        .notif-date-label {
+            font-size: 0.75rem; font-weight: 700; color: var(--text-muted);
+            text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px;
+            border-bottom: 1px solid #d1d9e0; padding-bottom: 8px;
+        }
+
+        .notif-card {
+            background-color: var(--card-bg); border-radius: 12px; padding: 20px;
+            margin-bottom: 12px; display: flex; gap: 18px; align-items: flex-start;
+            border: 1px solid transparent; transition: all 0.2s;
+        }
+        .notif-card:hover { box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
+
+        /* Ikon Status */
+        .icon-circle {
+            width: 45px; height: 45px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0;
+        }
+        .icon-danger { background-color: var(--danger-bg); color: var(--danger-color); }
+        .icon-info { background-color: var(--info-bg); color: var(--info-color); }
+        .icon-sys { background-color: var(--sys-bg); color: var(--sys-color); }
+
+        /* Konten Teks */
+        .notif-content { flex-grow: 1; }
+        .notif-title { font-weight: 700; color: var(--primary-dark); font-size: 1rem; margin-bottom: 6px; }
+        .notif-desc { font-size: 0.9rem; color: var(--text-main); line-height: 1.5; margin-bottom: 12px; }
+        .notif-desc strong { font-weight: 700; }
+        .notif-desc-dim { color: var(--text-dim); }
+
+        /* Area Waktu & Status */
+        .notif-meta { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .notif-time { font-size: 0.75rem; color: var(--text-muted); white-space: nowrap; }
+        .unread-indicator { width: 8px; height: 8px; background-color: var(--primary-dark); border-radius: 50%; }
+
+        /* Tombol di dalam Notifikasi */
+        .notif-actions { display: flex; gap: 10px; margin-top: 5px; }
+        .btn-inner-solid {
+            background-color: var(--primary-dark); color: white; border: none;
+            padding: 6px 18px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; transition: 0.2s;
+        }
+        .btn-inner-solid:hover { background-color: #033a47; color: white; }
+        
+        .btn-inner-outline {
+            background-color: #f8fafc; color: var(--text-main); border: 1px solid #cbd5e1;
+            padding: 6px 18px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; transition: 0.2s;
+        }
+        .btn-inner-outline:hover { background-color: #e2e8f0; }
+
+        .load-more-link {
+            display: block; text-align: center; margin-top: 35px; color: var(--primary-light);
+            font-weight: 700; font-size: 0.9rem; text-decoration: none; transition: color 0.2s;
+        }
+        .load-more-link:hover { color: var(--primary-dark); text-decoration: underline; }
+
+        /* Responsive */
+        @media (max-width: 991px) {
+            .sidebar { transform: translateX(-100%); transition: 0.3s; }
+            .main-content { margin-left: 0; }
+            .header-flex-wrapper { flex-direction: column; align-items: flex-start !important; gap: 15px; }
+            .header-actions { width: 100%; justify-content: flex-start; }
+        }
+        @media (max-width: 768px) {
+            .dashboard-body { padding: 10px 20px 40px 20px; }
+            .notif-card { flex-direction: column; gap: 12px; }
+            .notif-meta { align-self: flex-start; order: -1; width: 100%; justify-content: space-between; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-icon">
+                <img src="../gambar/yayasan ihsan tauhid.png" alt="Logo" class="sidebar-logo">
+            </div>
+            <div>
+                <div class="brand-text">Ihsan Tauhid</div>
+                <div class="brand-sub">Management System</div>
+            </div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-grid-1x2"></i> Dashboard</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-file-earmark-text"></i> Dokumen</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link active"><i class="bi bi-bell-fill"></i> Notifikasi</a>
+            </li>
+            <li class="nav-item">
+                <a href="#" class="nav-link"><i class="bi bi-gear"></i> Pengaturan</a>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <a href="#" class="logout-link"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <header class="top-header">
+            <div class="notif-bell">
+                <i class="bi bi-bell"></i>
+                <span class="notif-dot"></span>
+            </div>
+            <div class="user-profile-header">
+                <div>
+                    <div class="user-name-sm">kylian mbappe</div>
+                    <div class="user-nip-sm">NIP: 19850312010111</div>
+                </div>
+                <img src="/gambar/Dictator mbappe.jpg" alt="User" class="user-avatar-sm">
+            </div>
+        </header>
+
+        <div class="dashboard-body">
+            
+            <div class="d-flex justify-content-between align-items-end mb-4 header-flex-wrapper fade-in" style="opacity: 0;">
+                <div>
+                    <h1 class="page-title">Pusat Notifikasi</h1>
+                    <p class="page-sub mb-0">Pantau pembaruan dokumen dan aktivitas sistem Anda</p>
+                </div>
+                <div class="header-actions">
+                    <button class="btn btn-outline-custom"><i class="bi bi-filter"></i> Filter</button>
+                    <button class="btn btn-primary-custom"><i class="bi bi-check2-all"></i> Tandai Semua Dibaca</button>
+                </div>
+            </div>
+
+            <div class="notif-group">
+                <div class="notif-date-label">HARI INI</div>
+                
+                <div class="notif-card" style="background-color: #fef8f8;">
+                    <div class="icon-circle icon-danger">
+                        <i class="bi bi-exclamation-circle-fill"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">Dokumen Ijazah Ditolak</div>
+                        <div class="notif-desc">
+                            Pemeriksaan sistem menemukan bahwa scan dokumen ijazah S2 tidak terbaca dengan jelas. <strong>Mohon lakukan scan ulang</strong> dengan resolusi minimal 300 DPI.
+                        </div>
+                        <div class="notif-actions">
+                            <button class="btn btn-inner-solid">Upload Ulang</button>
+                            <button class="btn btn-inner-outline">Lihat Detail</button>
+                        </div>
+                    </div>
+                    <div class="notif-meta">
+                        <span class="notif-time">10:45 AM</span>
+                        <div class="unread-indicator"></div>
+                    </div>
+                </div>
+
+                <div class="notif-card" style="background-color: #f4fafe;">
+                    <div class="icon-circle icon-info">
+                        <i class="bi bi-file-earmark-check-fill"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">Sertifikasi Pendidik Diverifikasi</div>
+                        <div class="notif-desc mb-0">
+                            Selamat! Sertifikasi kompetensi profesional Anda telah berhasil diverifikasi oleh LLDIKTI Wilayah IV.
+                        </div>
+                    </div>
+                    <div class="notif-meta">
+                        <span class="notif-time">08:20 AM</span>
+                        <div class="unread-indicator"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notif-group">
+                <div class="notif-date-label">KEMARIN</div>
+                
+                <div class="notif-card">
+                    <div class="icon-circle icon-sys">
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">Update Jadwal Pemeliharaan</div>
+                        <div class="notif-desc mb-0">
+                            Portal MIS akan mengalami masa pemeliharaan rutin pada hari Sabtu, jam 22:00 WIB. Beberapa fitur mungkin tidak dapat diakses.
+                        </div>
+                    </div>
+                    <div class="notif-meta">
+                        <span class="notif-time">Kemarin, 14:15</span>
+                    </div>
+                </div>
+
+                <div class="notif-card">
+                    <div class="icon-circle icon-info" style="background-color: #e0f2fe; color: #0284c7;">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title">Lengkapi Profil Kepegawaian</div>
+                        <div class="notif-desc">
+                            Batas akhir pemutakhiran data profil kepegawaian periode Ganjil adalah 3 hari lagi. Pastikan semua data valid.
+                        </div>
+                        <div class="notif-actions">
+                            <button class="btn btn-inner-outline">Lengkapi Sekarang</button>
+                        </div>
+                    </div>
+                    <div class="notif-meta">
+                        <span class="notif-time">Kemarin, 09:30</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="notif-group">
+                <div class="notif-date-label">MINGGU LALU</div>
+                
+                <div class="notif-card" style="opacity: 0.8;">
+                    <div class="icon-circle icon-sys" style="background-color: transparent; border: 1px solid #e2e8f0;">
+                        <i class="bi bi-megaphone-fill" style="color: #cbd5e1;"></i>
+                    </div>
+                    <div class="notif-content">
+                        <div class="notif-title" style="color: var(--text-muted);">Pengumuman Hibah Penelitian</div>
+                        <div class="notif-desc notif-desc-dim mb-0">
+                            Pendaftaran hibah penelitian internal semester genap telah dibuka. Unduh panduan pendaftaran pada menu Dokumen.
+                        </div>
+                    </div>
+                    <div class="notif-meta">
+                        <span class="notif-time">5 Hari Lalu</span>
+                    </div>
+                </div>
+            </div>
+
+            <a href="#" class="load-more-link fade-in" style="opacity: 0;">Tampilkan Lebih Banyak</a>
+
+        </div>
+    </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Animasi Fade-in berurutan saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", function() {
+        // Animasi untuk Header
+        const header = document.querySelector('.fade-in');
+        setTimeout(() => {
+            header.style.opacity = '1';
+            header.style.transform = 'translateY(0)';
+            header.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        }, 100);
+
+        // Animasi untuk list notifikasi berurutan
+        const groups = document.querySelectorAll('.notif-group');
+        setTimeout(() => {
+            groups.forEach((group, index) => {
+                setTimeout(() => {
+                    group.classList.add('show-animate');
+                }, 150 * index);
+            });
+        }, 200);
+
+        // Animasi Load More Text
+        const loadMore = document.querySelector('.load-more-link');
+        setTimeout(() => {
+            loadMore.style.opacity = '1';
+            loadMore.style.transition = 'opacity 0.5s ease-out';
+        }, 600);
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kualifikasi & Sertifikasi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Custom Variables & Background */
+        :root {
+            --primary-color: #0b4a6b;
+            --bg-color: #e3eff4;
+            --card-bg: #f8fbfc;
+            --icon-bg: #d6e8ef;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-image: radial-gradient(circle at top right, #d4e8ed, transparent),
+                              radial-gradient(circle at bottom left, #dcebe9, transparent);
+            background-attachment: fixed;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        /* Logo & Header */
+        .header-icon {
+            font-size: 3rem;
+            color: var(--primary-color);
+        }
+        .form-title {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Stepper Progress Bar */
+        .stepper-wrapper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            position: relative;
+            padding: 0 10%;
+        }
+        .stepper-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 15%;
+            right: 15%;
+            height: 2px;
+            background-color: #cbd5e1;
+            z-index: 1;
+        }
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #cbd5e1;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px auto;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        /* Step 1 Selesai & Step 2 Aktif */
+        .step.completed .step-circle, .step.active .step-circle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+        }
+        .step-text {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+        .step.completed .step-text, .step.active .step-text {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Custom Card Styles */
+        .custom-card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+            margin-bottom: 24px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .custom-card.show-animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .card-icon {
+            width: 35px;
+            height: 35px;
+            background-color: var(--icon-bg);
+            color: var(--primary-color);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 1.2rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0;
+            color: var(--primary-color);
+        }
+
+        /* Input Styles */
+        .form-control, .form-select {
+            border: 1px solid #dee2e6;
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            background-color: #fcfdfe;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(11, 74, 107, 0.1);
+        }
+        .form-label {
+            font-size: 0.85rem;
+            color: #495057;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+        }
+
+        /* Checkbox */
+        .form-check-input {
+            margin-top: 0.2rem;
+        }
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Upload Area */
+        .upload-area {
+            border: 1px dashed #94a3b8;
+            border-radius: 8px;
+            background-color: #f1f5f9;
+            padding: 40px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .upload-area.dragover {
+            background-color: #e2e8f0;
+            border-color: var(--primary-color);
+        }
+        .btn-upload {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            padding: 0.4rem 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-upload:hover {
+            background-color: #f8f9fa;
+        }
+
+        /* Buttons */
+        .btn-custom-outline {
+            border: 1px solid #94a3b8;
+            color: #475569;
+            background-color: transparent;
+        }
+        .btn-custom-outline:hover {
+            background-color: #f1f5f9;
+        }
+        .btn-custom-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+        }
+        .btn-custom-primary:hover {
+            background-color: #083852;
+            color: white;
+        }
+        .btn-tambah {
+            border-radius: 6px;
+            padding: 0.6rem 1rem;
+            font-size: 0.9rem;
+            background-color: var(--primary-color);
+            color: white;
+        }
+        .btn-tambah:hover {
+            background-color: #083852;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container main-container">
+    <div class="text-center mb-5 fade-in-element">
+        <img src="/gambar/yayasan ihsan tauhid.png" alt="Logo" class="header-logo">
+        <h2 class="form-title mt-2">Kualifikasi & Sertifikasi</h2>
+        <p class="text-muted">Kelola riwayat pendidikan formal dan sertifikasi profesional Anda.</p>
+    </div>
+
+    <div class="stepper-wrapper fade-in-element">
+        <div class="step completed">
+            <div class="step-circle"><i class="bi bi-check-lg"></i></div>
+            <div class="step-text">Identitas Diri</div>
+        </div>
+        <div class="step active">
+            <div class="step-circle">2</div>
+            <div class="step-text">Kualifikasi</div>
+        </div>
+        <div class="step">
+            <div class="step-circle">3</div>
+            <div class="step-text">Unggah Berkas</div>
+        </div>
+    </div>
+
+    <form>
+        <div class="card custom-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="card-icon"><i class="bi bi-journal-text"></i></div>
+                    <div>
+                        <h5 class="section-title">Minat Penempatan</h5>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label">Bidang Ajar</label>
+                    <input type="text" class="form-control" placeholder="Contoh: Matematika">
+                </div>
+                
+                <div class="mb-2">
+                    <label class="form-label d-block">Informasi Posisi</label>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="posisiSMA" checked>
+                        <label class="form-check-label" for="posisiSMA">SMA</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="posisiSMP">
+                        <label class="form-check-label" for="posisiSMP">SMP</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card custom-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="card-icon"><i class="bi bi-mortarboard-fill"></i></div>
+                    <div>
+                        <h5 class="section-title">Riwayat Pendidikan</h5>
+                    </div>
+                </div>
+                
+                <div class="row align-items-end mb-3">
+                    <div class="col-md-5">
+                        <label class="form-label">Nama Institusi/Sekolah</label>
+                        <input type="text" class="form-control" placeholder="Contoh: Universitas Indonesia">
+                    </div>
+                    <div class="col-md-4 mt-3 mt-md-0">
+                        <label class="form-label">Jenjang/Gelar</label>
+                        <select class="form-select">
+                            <option selected disabled>Pilih Jenjang</option>
+                            <option value="1">S1</option>
+                            <option value="2">S2</option>
+                            <option value="3">S3</option>
+                            <option value="4">D3</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-3 mt-md-0">
+                        <label class="form-label">Tahun Lulus</label>
+                        <input type="number" class="form-control" placeholder="2024">
+                    </div>
+                </div>
+                
+                <div class="row align-items-end">
+                    <div class="col-md-9 mb-3 mb-md-0">
+                        <label class="form-label">Program Studi/Jurusan</label>
+                        <input type="text" class="form-control" placeholder="Contoh: Teknologi Pendidikan">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" class="btn btn-tambah w-100 js-btn-tambah">Tambah Riwayat</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card custom-card">
+            <div class="card-body p-4">
+                <div class="d-flex align-items-center mb-4">
+                    <div class="card-icon"><i class="bi bi-award-fill"></i></div>
+                    <div>
+                        <h5 class="section-title">Sertifikasi</h5>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label">Nama Sertifikasi</label>
+                    <input type="text" class="form-control" placeholder="Contoh : Sertifikasi AWS">
+                </div>
+                
+                <div class="upload-area mb-4" id="dropZone">
+                    <input type="file" id="fileInput" class="d-none">
+                    <button type="button" class="btn btn-upload" onclick="document.getElementById('fileInput').click()">
+                        <i class="bi bi-upload me-2"></i> Pilih Berkas
+                    </button>
+                    <div class="mt-2 text-muted" style="font-size: 0.8rem;" id="fileNameDisplay">atau seret file ke sini</div>
+                </div>
+                
+                <div class="text-center">
+                    <button type="button" class="btn btn-tambah px-4 js-btn-tambah">Tambah Riwayat</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-4 mb-5 fade-in-element">
+            <button type="button" class="btn btn-custom-outline px-4">Batal</button>
+            <div>
+                <button type="button" class="btn btn-light text-primary fw-medium me-2 px-4" style="background-color: #e6f0f5;">Simpan Draft</button>
+                <button type="submit" class="btn btn-custom-primary">Save & Next <i class="bi bi-arrow-right ms-1"></i></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 1. Animasi JS: Fade-in berurutan saat halaman dimuat
+    document.addEventListener("DOMContentLoaded", function() {
+        const cards = document.querySelectorAll('.custom-card');
+        const elements = document.querySelectorAll('.fade-in-element');
+        
+        // Setup state awal transparan
+        elements.forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(15px)';
+            el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        });
+
+        let delay = 100;
+
+        // Animasikan elemen non-kartu (header, stepper, bottom buttons)
+        elements.forEach((el, index) => {
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, delay * index);
+        });
+
+        // Animasikan kartu berurutan
+        setTimeout(() => {
+            cards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.classList.add('show-animate');
+                }, delay * (index + 1));
+            });
+        }, 300);
+    });
+
+    // 2. Interaktivitas Upload Area (Drag & Drop UI Feedback)
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileNameDisplay = document.getElementById('fileNameDisplay');
+
+    // Mencegah behavior default browser saat drag
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    // Tambah/hapus class saat file di-drag melewati kotak
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.add('dragover'), false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, () => dropZone.classList.remove('dragover'), false);
+    });
+
+    // Tangani event drop file
+    dropZone.addEventListener('drop', handleDrop, false);
+
+    function handleDrop(e) {
+        let dt = e.dataTransfer;
+        let files = dt.files;
+        handleFiles(files);
+    }
+
+    // Tangani event saat klik 'Pilih Berkas'
+    fileInput.addEventListener('change', function() {
+        handleFiles(this.files);
+    });
+
+    function handleFiles(files) {
+        if(files.length > 0) {
+            // Animasi sederhana mengubah teks jadi nama file
+            fileNameDisplay.style.opacity = '0';
+            setTimeout(() => {
+                fileNameDisplay.innerHTML = `<i class="bi bi-file-earmark-check text-success"></i> ${files[0].name}`;
+                fileNameDisplay.style.opacity = '1';
+                fileNameDisplay.style.color = '#0b4a6b';
+            }, 200);
+        }
+    }
+
+    // 3. Efek klik tombol "Tambah Riwayat"
+    const btnTambah = document.querySelectorAll('.js-btn-tambah');
+    btnTambah.forEach(btn => {
+        btn.addEventListener('click', function() {
+            let originalText = this.innerHTML;
+            this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Menambahkan...';
+            this.classList.add('disabled');
+            
+            // Simulasi proses penambahan 1 detik
+            setTimeout(() => {
+                this.innerHTML = '<i class="bi bi-check-circle"></i> Berhasil Ditambah';
+                this.classList.replace('btn-tambah', 'btn-success');
+                
+                // Kembalikan ke semula setelah 2 detik
+                setTimeout(() => {
+                    this.innerHTML = originalText;
+                    this.classList.replace('btn-success', 'btn-tambah');
+                    this.classList.remove('disabled');
+                }, 2000);
+            }, 1000);
+        });
+    });
+</script>
+
+</body>
+</html>

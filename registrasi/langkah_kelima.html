@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menunggu Verifikasi - Pendaftaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Custom Variables & Background */
+        :root {
+            --primary-color: #054a5c;
+            --secondary-color: #0e7d71;
+            --bg-color: #dbebe9;
+            --card-bg: #f4f8fa;
+            --text-muted: #64748b;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-image: radial-gradient(circle at top left, #e4f2f0, transparent 40%),
+                              radial-gradient(circle at bottom right, #cfe6e2, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin-top: 40px;
+            margin-bottom: 50px;
+        }
+
+        /* Header Logo */
+        .header-icon { font-size: 3rem; color: var(--primary-color); }
+
+        /* Custom Card Styles */
+        .custom-card {
+            background-color: var(--card-bg);
+            border: none;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+            margin-bottom: 20px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .custom-card.show-animate { opacity: 1; transform: translateY(0); }
+
+        /* Status Badge & Main Title */
+        .status-badge {
+            background-color: #ffc107;
+            color: #000;
+            font-weight: 600;
+            font-size: 0.85rem;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            display: inline-flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .main-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            font-size: 1.7rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Tracker / Timeline */
+        .tracker-wrapper {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 10%;
+        }
+        .tracker-line {
+            position: absolute;
+            top: 20px; left: 15%; right: 15%;
+            height: 2px;
+            background-color: #cbd5e1;
+            z-index: 1;
+        }
+        .tracker-line-active {
+            position: absolute;
+            top: 20px; left: 15%; width: 35%;
+            height: 2px;
+            background-color: var(--primary-color);
+            z-index: 1;
+        }
+        .tracker-step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            background: var(--card-bg);
+            padding: 0 10px;
+        }
+        .tracker-icon {
+            width: 42px; height: 42px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 8px auto;
+            font-size: 1.2rem;
+        }
+        .tracker-icon.active { background-color: var(--primary-color); color: white; }
+        .tracker-icon.inactive { background-color: white; border: 2px solid #cbd5e1; color: #cbd5e1; }
+        .tracker-title { font-size: 0.85rem; font-weight: 700; color: var(--primary-color); margin-bottom: 2px; }
+        .tracker-subtitle { font-size: 0.75rem; color: var(--text-muted); }
+        .tracker-step.inactive .tracker-title { color: var(--text-muted); }
+
+        /* Profile Section */
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 16px;
+            margin-bottom: 15px;
+        }
+        .profile-name { font-weight: 700; color: var(--primary-color); font-size: 1.2rem; margin-bottom: 5px; }
+        .badge-major { background-color: var(--primary-color); color: white; font-weight: 500; font-size: 0.75rem; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; display: inline-block;}
+        .profile-id { font-size: 0.75rem; color: var(--text-muted); }
+
+        /* Summary Data */
+        .summary-title { font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 20px; }
+        .data-label { font-size: 0.65rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 3px; }
+        .data-value { font-size: 0.9rem; font-weight: 600; color: var(--primary-color); margin-bottom: 18px; }
+        .text-success-custom { color: #0e7d71 !important; }
+
+        /* Help Desk Card */
+        .help-icon {
+            width: 40px; height: 40px; background-color: #dbebe9; color: var(--primary-color);
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .btn-outline-white {
+            background-color: white; border: 1px solid #cbd5e1; color: var(--primary-color);
+            font-weight: 600; font-size: 0.85rem; padding: 0.5rem 1.2rem; border-radius: 8px;
+        }
+        .btn-outline-white:hover { background-color: #f1f5f9; }
+
+        /* Bottom Button */
+        .btn-kembali {
+            background-color: var(--primary-color); color: white; font-weight: 500;
+            border-radius: 30px; padding: 0.6rem 2rem; border: none; font-size: 0.95rem;
+        }
+        .btn-kembali:hover { background-color: #033a47; color: white; }
+
+    </style>
+</head>
+<body>
+
+<div class="container main-container">
+    <div class="text-center mb-4 fade-in-element">
+        <img src="/gambar/yayasan ihsan tauhid.png" alt="Logo" class="header-logo">
+    </div>
+
+    <div class="card custom-card text-center p-4 p-md-5">
+        <div>
+            <div class="status-badge">
+                <i class="bi bi-info-circle-fill me-2"></i> Status: Menunggu Verifikasi
+            </div>
+            <h2 class="main-title">Terima Kasih, Pengajuan Anda Diterima!</h2>
+            <p class="text-muted mb-0 mx-auto" style="max-width: 500px; font-size: 0.95rem;">
+                Mohon cek Email dan WhatsApp secara berkala untuk informasi lanjutan terkait tahapan seleksi selanjutnya.
+            </p>
+        </div>
+    </div>
+
+    <div class="card custom-card p-4">
+        <div class="tracker-wrapper">
+            <div class="tracker-line"></div>
+            <div class="tracker-line-active"></div>
+            
+            <div class="tracker-step">
+                <div class="tracker-icon active"><i class="bi bi-person-check"></i></div>
+                <div class="tracker-title">Registrasi</div>
+                <div class="tracker-subtitle">Selesai</div>
+            </div>
+            
+            <div class="tracker-step">
+                <div class="tracker-icon active"><i class="bi bi-file-earmark-check"></i></div>
+                <div class="tracker-title">Verifikasi Dokumen</div>
+                <div class="tracker-subtitle" style="color: var(--primary-color); font-weight: 600;">Sedang Berlangsung</div>
+            </div>
+            
+            <div class="tracker-step inactive">
+                <div class="tracker-icon inactive"><i class="bi bi-check-circle"></i></div>
+                <div class="tracker-title">Selesai</div>
+                <div class="tracker-subtitle">Menunggu</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card custom-card h-100 p-4 text-center d-flex flex-column justify-content-center align-items-center">
+                <img src="/gambar/Dictator mbappe.jpg" alt="Foto Profil" class="profile-img">
+                <div class="profile-name">kylian mbappe</div>
+                <div class="badge-major">S1 Teknik Informatika</div>
+                <div class="profile-id">ID: REG-2023-0892</div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card custom-card h-100 p-4">
+                <h5 class="summary-title">Ringkasan Data Profil</h5>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="data-label">Email Aktif</div>
+                        <div class="data-value">mbappethedictator@eduportal.com</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="data-label">Nomor Telepon</div>
+                        <div class="data-value">+62 812-3456-7890</div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="data-label">Asal Sekolah</div>
+                        <div class="data-value">SMAN 1 Jakarta</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="data-label">Tahun Lulus</div>
+                        <div class="data-value">2023</div>
+                    </div>
+                    
+                    <div class="col-sm-6">
+                        <div class="data-label">Alamat Domisili</div>
+                        <div class="data-value mb-sm-0">Kebayoran Baru, Jakarta Selatan</div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="data-label">Status Dokumen</div>
+                        <div class="data-value mb-0 text-success-custom"><i class="bi bi-check-circle-fill me-1"></i> Terunggah (4/4)</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card custom-card p-3 p-md-4">
+        <div class="d-flex flex-column flex-md-row align-items-center justify-content-between text-center text-md-start">
+            <div class="d-flex flex-column flex-md-row align-items-center mb-3 mb-md-0">
+                <div class="help-icon me-md-3 mb-2 mb-md-0"><i class="bi bi-headset"></i></div>
+                <div>
+                    <div style="font-weight: 700; color: var(--primary-color); font-size: 0.95rem;">Butuh bantuan?</div>
+                    <div class="text-muted" style="font-size: 0.85rem;">Hubungi tim helpdesk kami jika ada pertanyaan mengenai berkas.</div>
+                </div>
+            </div>
+            <button class="btn btn-outline-white text-nowrap">Hubungi Support</button>
+        </div>
+    </div>
+
+    <div class="text-center mt-5 mb-5 fade-in-element">
+        <button class="btn btn-kembali">
+            <i class="bi bi-arrow-left me-2"></i> Kembali ke Login
+        </button>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // Animasi Load Halaman (Fade-in cascade)
+    document.addEventListener("DOMContentLoaded", function() {
+        const elements = document.querySelectorAll('.fade-in-element');
+        const cards = document.querySelectorAll('.custom-card');
+        
+        // Inisialisasi posisi awal (transparan & turun ke bawah sedikit)
+        elements.forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'translateY(15px)';
+            el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        });
+
+        // Tampilkan elemen non-kartu
+        let delay = 100;
+        elements.forEach((el, index) => {
+            setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, delay * index);
+        });
+
+        // Tampilkan kartu secara berurutan
+        setTimeout(() => {
+            cards.forEach((card, index) => {
+                setTimeout(() => { card.classList.add('show-animate'); }, 150 * index);
+            });
+        }, 200);
+    });
+</script>
+
+</body>
+</html>

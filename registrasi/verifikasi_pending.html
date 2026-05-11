@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kualifikasi & Sertifikasi - Pendaftaran</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    
+    <style>
+        /* Custom Variables & Background */
+        :root {
+            --primary-color: #054a5c;
+            --secondary-color: #0e7d71;
+            --bg-color: #dbebe9;
+            --card-bg: #f2f7f9;
+            --icon-bg: #cde4e2;
+            --light-green-bg: #eaf8f5;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #333;
+            background-image: radial-gradient(circle at top left, #e4f2f0, transparent 40%),
+                              radial-gradient(circle at bottom right, #cfe6e2, transparent 40%);
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            max-width: 900px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+
+        /* Header & Stepper */
+        .header-icon { font-size: 3rem; color: var(--primary-color); }
+        .form-title { color: var(--primary-color); font-weight: 700; }
+        
+        .stepper-wrapper {
+            display: flex; justify-content: space-between; margin-bottom: 40px; position: relative; padding: 0 15%;
+        }
+        .stepper-wrapper::before {
+            content: ''; position: absolute; top: 15px; left: 20%; right: 20%; height: 2px; background-color: #cbd5e1; z-index: 1;
+        }
+        .step { position: relative; z-index: 2; text-align: center; }
+        .step-circle {
+            width: 32px; height: 32px; border-radius: 50%; background-color: white; border: 2px solid #cbd5e1; color: #94a3b8;
+            display: flex; align-items: center; justify-content: center; margin: 0 auto 8px auto; font-weight: bold; font-size: 0.9rem;
+        }
+        .step.completed .step-circle, .step.active .step-circle {
+            background-color: var(--primary-color); border-color: var(--primary-color); color: white;
+        }
+        .step-text { font-size: 0.8rem; color: #64748b; }
+        .step.active .step-text, .step.completed .step-text { color: var(--primary-color); font-weight: 600; }
+
+        /* Custom Cards */
+        .custom-card {
+            background-color: var(--card-bg); border: none; border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03); margin-bottom: 24px;
+            opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .custom-card.show-animate { opacity: 1; transform: translateY(0); }
+        .card-icon {
+            width: 35px; height: 35px; background-color: var(--icon-bg); color: var(--primary-color);
+            border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 1.2rem;
+        }
+        .section-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 0; color: var(--primary-color); }
+
+        /* Minat Penempatan Input */
+        .form-control-custom { background-color: white; border: none; border-radius: 8px; padding: 0.6rem 1rem; color: #555; }
+        .form-label { font-size: 0.85rem; color: #495057; font-weight: 600; margin-bottom: 0.4rem; }
+
+        /* Riwayat Pendidikan List */
+        .education-item { margin-bottom: 20px; }
+        .edu-title { font-weight: 600; color: #333; margin-bottom: 2px; font-size: 0.95rem; }
+        .edu-subtitle { color: var(--secondary-color); font-size: 0.85rem; font-weight: 500; }
+        .edu-badge { background-color: white; color: var(--secondary-color); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* Sertifikasi List */
+        .cert-card { background-color: white; border-radius: 10px; padding: 12px 15px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
+        .cert-label { font-size: 0.65rem; color: var(--secondary-color); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .cert-title { font-weight: 700; font-size: 0.9rem; color: #333; margin-top: 2px; }
+        .cert-icon { color: #6c757d; cursor: pointer; }
+
+        /* Action Buttons in Main Page */
+        .btn-add-dark { background-color: #034b5c; color: white; border-radius: 8px; font-size: 0.85rem; padding: 0.5rem 1rem; font-weight: 500; border: none; }
+        .btn-add-dark:hover { background-color: #023845; color: white; }
+        .btn-upload-dashed { border: 1.5px dashed #8ecfca; background-color: transparent; color: var(--secondary-color); border-radius: 8px; width: 100%; padding: 0.8rem; font-weight: 600; font-size: 0.85rem; transition: all 0.2s; }
+        .btn-upload-dashed:hover { background-color: var(--light-green-bg); border-color: var(--secondary-color); }
+
+        /* --- STYLING KHUSUS MODAL / POPUP SESUAI GAMBAR --- */
+        .custom-modal-content {
+            background-color: #999f9f; /* Warna abu-abu background modal dari gambar */
+            border-radius: 16px; border: none; padding: 15px;
+        }
+        .custom-modal-header { border-bottom: none; padding-bottom: 0; }
+        .custom-modal-title { color: #0b574f; font-weight: 700; font-size: 1.3rem; display: flex; align-items: center; }
+        .custom-modal-icon { background-color: #fce7d0; color: #d06018; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-right: 15px; font-size: 1.2rem; }
+        .custom-modal-label { color: #0e6b5e; font-weight: 600; font-size: 0.85rem; margin-bottom: 6px; }
+        
+        .custom-modal-input {
+            background-color: #cbd1cf; border: 1px solid #b8bebc; border-radius: 8px; color: #555; padding: 0.6rem 1rem;
+        }
+        .custom-modal-input::placeholder { color: #889291; }
+        .custom-modal-input:focus { background-color: #dbe0de; border-color: #0e6b5e; box-shadow: none; }
+        
+        .custom-modal-btn {
+            background-color: #ebfcfa; color: #0b6e61; font-weight: 700; border-radius: 8px; padding: 0.6rem 1rem; border: none; width: 100%; transition: all 0.2s;
+        }
+        .custom-modal-btn:hover { background-color: #d1f5ee; }
+
+        .modal-upload-area {
+            border: 1.5px dashed #7a8585; background-color: transparent; border-radius: 8px; padding: 50px 20px; text-align: center; margin-bottom: 20px;
+        }
+        .btn-modal-pilih-berkas {
+            background-color: #eef3f2; color: #054a5c; border-radius: 20px; padding: 0.4rem 1.2rem; font-size: 0.85rem; font-weight: 700; border: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        /* Footer Nav Buttons */
+        .btn-outline-custom { border: 1px solid #94a3b8; color: #475569; }
+        .btn-draft { background-color: #e6f0f5; color: var(--primary-color); font-weight: 600; }
+        .btn-next { background-color: var(--primary-color); color: white; font-weight: 500; }
+    </style>
+</head>
+<body>
+
+<div class="container main-container">
+    <div class="text-center mb-5 fade-in-element">
+        <img src="/gambar/yayasan ihsan tauhid.png" alt="Logo" class="header-logo">
+        <h2 class="form-title mt-2">Kualifikasi & Sertifikasi</h2>
+        <p class="text-muted">Kelola riwayat pendidikan formal dan sertifikasi profesional Anda.</p>
+    </div>
+
+    <div class="stepper-wrapper fade-in-element">
+        <div class="step completed"><div class="step-circle">1</div><div class="step-text">Identitas Diri</div></div>
+        <div class="step active"><div class="step-circle">2</div><div class="step-text">Kualifikasi</div></div>
+        <div class="step"><div class="step-circle">3</div><div class="step-text">Unggah Berkas</div></div>
+    </div>
+
+    <div class="card custom-card">
+        <div class="card-body p-4">
+            <div class="d-flex align-items-center mb-4">
+                <div class="card-icon"><i class="bi bi-journal-text"></i></div>
+                <h5 class="section-title">Minat Penempatan</h5>
+            </div>
+            <div class="mb-3">
+                <label class="form-label">Bidang Ajar</label>
+                <input type="text" class="form-control form-control-custom" placeholder="Contoh: Matematika">
+            </div>
+            <div>
+                <label class="form-label d-block">Informasi Posisi</label>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="posisiSMA" checked>
+                    <label class="form-check-label" for="posisiSMA">SMA</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" id="posisiSMP">
+                    <label class="form-check-label" for="posisiSMP">SMP</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-md-7">
+            <div class="card custom-card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="card-icon"><i class="bi bi-mortarboard"></i></div>
+                        <h5 class="section-title">Riwayat Pendidikan</h5>
+                    </div>
+                    
+                    <div id="educationList">
+                        <div class="education-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="edu-title">Universitas Indonesia</div>
+                                <div class="edu-subtitle">S3 Ilmu Pendidikan</div>
+                            </div>
+                            <div class="edu-badge">2018 - 2022</div>
+                        </div>
+                        
+                        <div class="education-item d-flex justify-content-between align-items-start">
+                            <div>
+                                <div class="edu-title">Institut Teknologi Bandung</div>
+                                <div class="edu-subtitle">S2 Manajemen Pendidikan</div>
+                            </div>
+                            <div class="edu-badge">2014 - 2016</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-add-dark mt-3" data-bs-toggle="modal" data-bs-target="#modalTambahRiwayat">
+                        <i class="bi bi-plus-lg"></i> Tambah Riwayat
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-5">
+            <div class="card custom-card h-100">
+                <div class="card-body p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="card-icon" style="background-color: #cbe4f7; color: #0a58ca;"><i class="bi bi-patch-check"></i></div>
+                        <h5 class="section-title">Sertifikasi</h5>
+                    </div>
+
+                    <div id="certList">
+                        <div class="cert-card d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="cert-label">CERTIFICATE 1</div>
+                                <div class="cert-title">Certified Google Educator Level 2</div>
+                            </div>
+                            <i class="bi bi-gear cert-icon"></i>
+                        </div>
+                        
+                        <div class="cert-card d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="cert-label">CERTIFICATE 2</div>
+                                <div class="cert-title">School Management Professional</div>
+                            </div>
+                            <i class="bi bi-gear cert-icon"></i>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-upload-dashed mt-2" data-bs-toggle="modal" data-bs-target="#modalSertifikasi">
+                        <i class="bi bi-file-earmark-arrow-up"></i> Unggah Sertifikat Baru
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-between mt-4 mb-5 fade-in-element">
+        <button type="button" class="btn btn-outline-custom px-4">Batal</button>
+        <div>
+            <button type="button" class="btn btn-draft me-2 px-4">Simpan Draft</button>
+            <button type="button" class="btn btn-next px-4">Save & Next <i class="bi bi-arrow-right ms-1"></i></button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalTambahRiwayat" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title custom-modal-title">
+                    <div class="custom-modal-icon"><i class="bi bi-pencil-square"></i></div>
+                    Form Tambah Riwayat
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formRiwayat">
+                    <div class="row mb-3">
+                        <div class="col-md-5">
+                            <label class="custom-modal-label">Nama Institusi/Sekolah</label>
+                            <input type="text" class="form-control custom-modal-input" id="inputInstitusi" placeholder="Contoh: Universitas Indonesia" required>
+                        </div>
+                        <div class="col-md-4 mt-3 mt-md-0">
+                            <label class="custom-modal-label">Jenjang/Gelar</label>
+                            <select class="form-select custom-modal-input" id="inputJenjang">
+                                <option selected disabled>Pilih Jenjang</option>
+                                <option value="S1">S1</option>
+                                <option value="S2">S2</option>
+                                <option value="S3">S3</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mt-3 mt-md-0">
+                            <label class="custom-modal-label">Tahun Lulus</label>
+                            <input type="number" class="form-control custom-modal-input" id="inputTahun" placeholder="2024" required>
+                        </div>
+                    </div>
+                    <div class="row align-items-end">
+                        <div class="col-md-8 mb-3 mb-md-0">
+                            <label class="custom-modal-label">Program Studi/Jurusan</label>
+                            <input type="text" class="form-control custom-modal-input" id="inputJurusan" placeholder="Contoh: Teknologi Pendidikan" required>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="custom-modal-btn">Simpan Perubahan</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalSertifikasi" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content custom-modal-content">
+            <div class="modal-header custom-modal-header">
+                <h5 class="modal-title custom-modal-title">
+                    <div class="custom-modal-icon"><i class="bi bi-pencil-square"></i></div>
+                    Form Sertifikasi
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" style="filter: invert(1);"></button>
+            </div>
+            <div class="modal-body">
+                <form id="formSertifikasi">
+                    <div class="mb-4">
+                        <label class="custom-modal-label">Nama Sertifikasi</label>
+                        <input type="text" class="form-control custom-modal-input" id="inputNamaCert" placeholder="Contoh : Sertifikasi AWS" required>
+                    </div>
+                    
+                    <div class="modal-upload-area position-relative">
+                        <input type="file" id="fileCert" class="position-absolute top-0 start-0 w-100 h-100" style="opacity: 0; cursor: pointer;">
+                        <button type="button" class="btn-modal-pilih-berkas">
+                            <i class="bi bi-upload"></i> Pilih Berkas
+                        </button>
+                        <div id="certFileName" class="mt-2 text-white" style="font-size: 0.8rem; display: none;"></div>
+                    </div>
+
+                    <button type="submit" class="custom-modal-btn w-100 py-2">Simpan Perubahan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+    // 1. Animasi Load Halaman
+    document.addEventListener("DOMContentLoaded", function() {
+        const elements = document.querySelectorAll('.fade-in-element');
+        const cards = document.querySelectorAll('.custom-card');
+        
+        elements.forEach(el => {
+            el.style.opacity = '0'; el.style.transform = 'translateY(15px)';
+            el.style.transition = 'opacity 0.5s ease-out, transform 0.5s ease-out';
+        });
+
+        let delay = 100;
+        elements.forEach((el, index) => {
+            setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, delay * index);
+        });
+
+        setTimeout(() => {
+            cards.forEach((card, index) => {
+                setTimeout(() => { card.classList.add('show-animate'); }, delay * index);
+            });
+        }, 200);
+    });
+
+    // 2. Interaksi Simpan Riwayat Pendidikan (Menambah data ke UI)
+    document.getElementById('formRiwayat').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const institusi = document.getElementById('inputInstitusi').value;
+        const jenjang = document.getElementById('inputJenjang').value;
+        const jurusan = document.getElementById('inputJurusan').value;
+        const tahun = document.getElementById('inputTahun').value;
+
+        const newListHTML = `
+            <div class="education-item d-flex justify-content-between align-items-start" style="animation: fadeIn 0.5s;">
+                <div>
+                    <div class="edu-title">${institusi}</div>
+                    <div class="edu-subtitle">${jenjang} ${jurusan}</div>
+                </div>
+                <div class="edu-badge">${tahun}</div>
+            </div>
+        `;
+        document.getElementById('educationList').insertAdjacentHTML('beforeend', newListHTML);
+        
+        // Tutup modal & reset form
+        bootstrap.Modal.getInstance(document.getElementById('modalTambahRiwayat')).hide();
+        this.reset();
+    });
+
+    // 3. Menampilkan Nama File di Modal Sertifikasi
+    document.getElementById('fileCert').addEventListener('change', function() {
+        const display = document.getElementById('certFileName');
+        if(this.files.length > 0) {
+            display.style.display = 'block';
+            display.innerHTML = `<i class="bi bi-check-circle-fill text-light"></i> File terpilih: ${this.files[0].name}`;
+        }
+    });
+
+    // 4. Interaksi Simpan Sertifikasi (Menambah data ke UI)
+    let certCount = 2; // Sudah ada 2 di HTML
+    document.getElementById('formSertifikasi').addEventListener('submit', function(e) {
+        e.preventDefault();
+        certCount++;
+        const namaCert = document.getElementById('inputNamaCert').value;
+
+        const newCertHTML = `
+            <div class="cert-card d-flex justify-content-between align-items-center" style="animation: fadeIn 0.5s;">
+                <div>
+                    <div class="cert-label">CERTIFICATE ${certCount}</div>
+                    <div class="cert-title">${namaCert}</div>
+                </div>
+                <i class="bi bi-gear cert-icon"></i>
+            </div>
+        `;
+        document.getElementById('certList').insertAdjacentHTML('beforeend', newCertHTML);
+        
+        // Tutup modal & reset form
+        bootstrap.Modal.getInstance(document.getElementById('modalSertifikasi')).hide();
+        this.reset();
+        document.getElementById('certFileName').style.display = 'none';
+    });
+</script>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+</style>
+</body>
+</html>
