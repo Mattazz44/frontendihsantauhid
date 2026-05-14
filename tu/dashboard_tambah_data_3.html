@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Tambah Data - Unggah Berkas</title>
+
+    <!-- Bootstrap -->
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icon -->
+
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    >
+
+    <!-- Font -->
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        :root {
+
+            --sidebar-bg: #034459;
+            --sidebar-active: #156276;
+
+            --main-bg: #e2eaf0;
+            --card-bg: #f8fafc;
+
+            --primary-color: #034459;
+
+            --text-muted: #64748b;
+
+            --border-color: #cbd5e1;
+        }
+
+        * {
+
+            margin: 0;
+            padding: 0;
+
+            box-sizing: border-box;
+        }
+
+        body {
+
+            font-family: 'Inter', sans-serif;
+
+            background-color: var(--main-bg);
+
+            overflow-x: hidden;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+
+            width: 260px;
+
+            background-color: var(--sidebar-bg);
+
+            min-height: 100vh;
+
+            position: fixed;
+
+            color: rgba(255,255,255,0.7);
+
+            z-index: 1000;
+
+            padding: 16px;
+        }
+
+        .sidebar .brand {
+
+            color: white;
+
+            font-weight: 600;
+
+            font-size: 1.1rem;
+        }
+
+        .sidebar-logo {
+
+            width: 45px;
+            height: 45px;
+
+            object-fit: contain;
+
+            background: white;
+
+            padding: 6px;
+
+            border-radius: 10px;
+
+            margin-right: 12px;
+        }
+
+        .sidebar .nav-link {
+
+            color: rgba(255,255,255,0.72);
+
+            border-radius: 10px;
+
+            margin-bottom: 6px;
+
+            padding: 11px 15px;
+
+            transition: all 0.22s ease;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active,
+        .sidebar .nav-link:focus,
+        .sidebar .nav-link:active {
+
+            background-color: var(--sidebar-active) !important;
+
+            color: white !important;
+
+            box-shadow: none !important;
+        }
+
+        .sidebar .nav-link i {
+
+            margin-right: 10px;
+
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+
+            position: absolute;
+
+            bottom: 20px;
+
+            width: calc(100% - 32px);
+        }
+
+        /* ================= MAIN ================= */
+
+        .main-content {
+
+            margin-left: 260px;
+
+            padding: 24px 40px;
+        }
+
+        /* ================= SEARCH ================= */
+
+        .search-wrapper {
+
+            position: relative;
+        }
+
+        .search-bar {
+
+            background-color: white;
+
+            border-radius: 999px;
+
+            border: none;
+
+            padding: 10px 20px 10px 42px;
+
+            width: 300px;
+
+            font-size: 0.9rem;
+        }
+
+        .search-bar:focus {
+
+            outline: none;
+
+            box-shadow:
+                0 0 0 4px rgba(3,68,89,0.08);
+        }
+
+        .search-icon {
+
+            position: absolute;
+
+            left: 15px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            color: #94a3b8;
+        }
+
+        /* ================= STEPPER ================= */
+
+        .stepper {
+
+            position: relative;
+
+            display: flex;
+
+            justify-content: space-between;
+
+            margin: 40px 0;
+
+            padding: 0 100px;
+        }
+
+        .stepper::before {
+
+            content: '';
+
+            position: absolute;
+
+            top: 15px;
+
+            left: 110px;
+            right: 110px;
+
+            height: 2px;
+
+            background-color: var(--border-color);
+
+            z-index: 1;
+        }
+
+        .step-progress-fill {
+
+            position: absolute;
+
+            top: 15px;
+
+            left: 110px;
+
+            width: calc(100% - 220px);
+
+            height: 2px;
+
+            background-color: var(--primary-color);
+
+            z-index: 1;
+        }
+
+        .step {
+
+            position: relative;
+
+            z-index: 2;
+
+            text-align: center;
+        }
+
+        .step-circle {
+
+            width: 32px;
+            height: 32px;
+
+            border-radius: 50%;
+
+            background-color: white;
+
+            border: 2px solid var(--border-color);
+
+            color: var(--border-color);
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            margin: 0 auto 10px;
+
+            font-weight: 700;
+        }
+
+        .step.completed .step-circle,
+        .step.active .step-circle {
+
+            background-color: var(--primary-color);
+
+            border-color: var(--primary-color);
+
+            color: white;
+        }
+
+        .step.active .step-circle {
+
+            box-shadow:
+                0 0 0 4px rgba(3,68,89,0.18);
+        }
+
+        .step-text {
+
+            font-size: 0.75rem;
+
+            color: var(--text-muted);
+
+            font-weight: 600;
+        }
+
+        /* ================= CARD ================= */
+
+        .form-card {
+
+            background-color: var(--card-bg);
+
+            border-radius: 16px;
+
+            border: 1px solid rgba(0,0,0,0.04);
+
+            padding: 30px;
+
+            margin-bottom: 24px;
+
+            box-shadow:
+                0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .card-icon-header {
+
+            display: flex;
+
+            align-items: center;
+
+            margin-bottom: 24px;
+        }
+
+        .card-title-custom {
+
+            margin: 0;
+
+            font-size: 1rem;
+
+            font-weight: 700;
+
+            color: #1e293b;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+        .card-title-custom i {
+
+            color: var(--primary-color);
+
+            font-size: 1.3rem;
+        }
+
+        /* ================= UPLOAD ================= */
+
+        .upload-item {
+
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            background-color: white;
+
+            border: 1px solid var(--border-color);
+
+            border-radius: 14px;
+
+            padding: 18px 20px;
+
+            margin-bottom: 16px;
+
+            transition: all 0.22s ease;
+        }
+
+        .upload-item:hover {
+
+            border-color: var(--primary-color);
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 6px 14px rgba(0,0,0,0.04);
+        }
+
+        .upload-item-left {
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 16px;
+        }
+
+        .upload-icon {
+
+            font-size: 1.4rem;
+
+            color: var(--primary-color);
+        }
+
+        .upload-title {
+
+            font-size: 0.92rem;
+
+            font-weight: 600;
+
+            color: #1e293b;
+
+            margin: 0 0 3px 0;
+        }
+
+        .upload-subtitle {
+
+            font-size: 0.75rem;
+
+            color: var(--text-muted);
+
+            margin: 0;
+        }
+
+        .file-status {
+
+            font-size: 0.78rem;
+
+            color: #10b981;
+
+            display: none;
+
+            margin-top: 5px;
+        }
+
+        /* ================= BUTTONS ================= */
+
+        .btn-upload-action {
+
+            background-color: white;
+
+            border: 1px solid var(--border-color);
+
+            color: #475569;
+
+            padding: 8px 16px;
+
+            border-radius: 20px;
+
+            font-size: 0.85rem;
+
+            font-weight: 600;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            transition: all 0.22s ease;
+        }
+
+        .btn-upload-action:hover,
+        .btn-upload-action:focus,
+        .btn-upload-action:active {
+
+            background-color: #f8fafc !important;
+
+            color: var(--primary-color) !important;
+
+            border-color: var(--primary-color) !important;
+
+            box-shadow: none !important;
+
+            transform: translateY(-1px);
+        }
+
+        .btn-upload-action.uploaded {
+
+            background-color: #f0fdf4;
+
+            border-color: #86efac;
+
+            color: #166534;
+        }
+
+        .btn-outline-custom {
+
+            background-color: transparent;
+
+            border: 1px solid var(--border-color);
+
+            color: #475569;
+
+            padding: 10px 24px;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            transition: all 0.22s ease;
+        }
+
+        .btn-outline-custom:hover,
+        .btn-outline-custom:focus,
+        .btn-outline-custom:active {
+
+            background-color: #eef2f7 !important;
+
+            border-color: #b8c4d3 !important;
+
+            color: #334155 !important;
+
+            box-shadow: none !important;
+
+            transform: translateY(-1px);
+        }
+
+        .btn-light-custom {
+
+            background-color: white;
+
+            border: 1px solid var(--border-color);
+
+            color: var(--primary-color);
+
+            padding: 10px 24px;
+
+            border-radius: 10px;
+
+            font-weight: 600;
+
+            transition: all 0.22s ease;
+        }
+
+        .btn-light-custom:hover,
+        .btn-light-custom:focus,
+        .btn-light-custom:active {
+
+            background-color: #f8fafc !important;
+
+            border-color: #cbd5e1 !important;
+
+            color: var(--primary-color) !important;
+
+            box-shadow: none !important;
+
+            transform: translateY(-1px);
+        }
+
+        .btn-primary-custom {
+
+            background-color: var(--primary-color);
+
+            color: white;
+
+            padding: 10px 24px;
+
+            border-radius: 10px;
+
+            border: none;
+
+            font-weight: 600;
+
+            transition: all 0.22s ease;
+
+            box-shadow:
+                0 8px 16px rgba(3,68,89,0.14);
+        }
+
+        .btn-primary-custom:hover,
+        .btn-primary-custom:focus,
+        .btn-primary-custom:active {
+
+            background-color: #04556d !important;
+
+            color: white !important;
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 22px rgba(3,68,89,0.20) !important;
+        }
+
+        .btn:focus,
+        .btn:active,
+        .btn.show,
+        .btn-check:focus + .btn {
+
+            outline: none !important;
+
+            box-shadow: none !important;
+        }
+
+        /* ================= ANIMATION ================= */
+
+        .animate-up {
+
+            opacity: 0;
+
+            transform: translateY(20px);
+
+            transition:
+                opacity 0.5s ease,
+                transform 0.5s ease;
+        }
+
+        .animate-up.show {
+
+            opacity: 1;
+
+            transform: translateY(0);
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+
+                margin-left: 0;
+
+                padding: 18px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .stepper {
+
+                padding: 0;
+
+                gap: 10px;
+            }
+
+            .stepper::before,
+            .step-progress-fill {
+
+                left: 40px;
+                right: 40px;
+            }
+
+            .button-wrapper {
+
+                flex-direction: column;
+
+                gap: 14px;
+            }
+
+            .button-group {
+
+                width: 100%;
+
+                flex-direction: column;
+            }
+
+            .button-group .btn,
+            .btn-outline-custom {
+
+                width: 100%;
+            }
+
+            .upload-item {
+
+                flex-direction: column;
+
+                align-items: flex-start;
+
+                gap: 16px;
+            }
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <div class="sidebar">
+
+        <div class="brand d-flex align-items-center mb-5 mt-2 px-2">
+
+            <img
+                src="/gambar/yayasan ihsan tauhid.png"
+                alt="Logo"
+                class="sidebar-logo"
+            >
+
+            <div>
+
+                <div class="lh-1">
+                    Ihsan Tauhid
+                </div>
+
+                <small
+                    class="fw-normal"
+                    style="font-size:0.65rem;"
+                >
+                    Management System
+                </small>
+
+            </div>
+
+        </div>
+
+        <ul class="nav flex-column">
+
+            <li class="nav-item">
+
+                <a class="nav-link" href="#">
+
+                    <i class="bi bi-grid-1x2"></i>
+
+                    Dashboard
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+
+                <a class="nav-link active" href="#">
+
+                    <i class="bi bi-people"></i>
+
+                    Data Pendidik/Tendik
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+
+                <a class="nav-link" href="#">
+
+                    <i class="bi bi-person-plus"></i>
+
+                    Data Registrasi
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+
+                <a class="nav-link" href="#">
+
+                    <i class="bi bi-bar-chart"></i>
+
+                    Laporan
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+
+                <a class="nav-link" href="#">
+
+                    <i class="bi bi-bell"></i>
+
+                    Notifikasi
+
+                </a>
+
+            </li>
+
+            <li class="nav-item">
+
+                <a class="nav-link" href="#">
+
+                    <i class="bi bi-gear"></i>
+
+                    Pengaturan
+
+                </a>
+
+            </li>
+
+        </ul>
+
+        <a href="#" class="nav-link logout-btn">
+
+            <i class="bi bi-box-arrow-right"></i>
+
+            Logout
+
+        </a>
+
+    </div>
+
+    <!-- ================= MAIN ================= -->
+
+    <div class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search search-icon"></i>
+
+                <input
+                    type="text"
+                    class="search-bar"
+                    placeholder="Search data or reports..."
+                >
+
+            </div>
+
+            <div class="d-flex align-items-center">
+
+                <button class="btn btn-link text-dark me-3">
+
+                    <i class="bi bi-bell fs-5"></i>
+
+                </button>
+
+                <div class="text-end me-2">
+
+                    <div
+                        class="fw-bold lh-1"
+                        style="font-size:0.85rem;"
+                    >
+                        Administrator
+                    </div>
+
+                    <small
+                        class="text-muted"
+                        style="font-size:0.75rem;"
+                    >
+                        NIP: 1985031201112
+                    </small>
+
+                </div>
+
+                <img
+                    src="/gambar/Udah Yappingnya_.jpg"
+                    alt="Profile"
+                    class="rounded-circle"
+                    width="38"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- BREADCRUMB -->
+
+        <nav aria-label="breadcrumb">
+
+            <ol
+                class="breadcrumb"
+                style="font-size:0.75rem;"
+            >
+
+                <li class="breadcrumb-item text-primary">
+                    Dashboard
+                </li>
+
+                <li class="breadcrumb-item text-primary">
+                    Data Pendidik/Tendik
+                </li>
+
+                <li class="breadcrumb-item active">
+                    Tambah Data
+                </li>
+
+            </ol>
+
+        </nav>
+
+        <h4 class="fw-bold mb-1">
+            Tambah Data Pendidik & Tendik
+        </h4>
+
+        <p
+            class="text-muted"
+            style="font-size:0.85rem;"
+        >
+            Kelola data guru, staf administrasi,
+            dan tenaga kependidikan lainnya.
+        </p>
+
+        <!-- ================= STEPPER ================= -->
+
+        <div class="stepper animate-up">
+
+            <div class="step-progress-fill"></div>
+
+            <div class="step completed">
+
+                <div class="step-circle">
+
+                    <i class="bi bi-check-lg"></i>
+
+                </div>
+
+                <div class="step-text">
+                    Identitas Diri
+                </div>
+
+            </div>
+
+            <div class="step completed">
+
+                <div class="step-circle">
+
+                    <i class="bi bi-check-lg"></i>
+
+                </div>
+
+                <div class="step-text">
+                    Kualifikasi
+                </div>
+
+            </div>
+
+            <div class="step active">
+
+                <div class="step-circle">
+                    3
+                </div>
+
+                <div class="step-text">
+                    Unggah Berkas
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ================= FORM ================= -->
+
+        <form>
+
+            <div class="form-card animate-up">
+
+                <div class="card-icon-header">
+
+                    <h5 class="card-title-custom">
+
+                        <i class="bi bi-file-earmark-text"></i>
+
+                        Unggah Berkas
+
+                    </h5>
+
+                </div>
+
+                <!-- IJAZAH -->
+
+                <div class="upload-item">
+
+                    <div class="upload-item-left">
+
+                        <i class="bi bi-file-earmark-pdf upload-icon"></i>
+
+                        <div>
+
+                            <p class="upload-title">
+                                Ijazah Terakhir (PDF)
+                            </p>
+
+                            <p class="upload-subtitle">
+                                Maksimal 2MB
+                            </p>
+
+                            <span
+                                class="file-status"
+                                id="status-ijazah"
+                            ></span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <button
+                            type="button"
+                            class="btn-upload-action"
+                            onclick="document.getElementById('inputIjazah').click()"
+                        >
+
+                            <i class="bi bi-upload"></i>
+
+                            Pilih Berkas
+
+                        </button>
+
+                        <input
+                            type="file"
+                            id="inputIjazah"
+                            hidden
+                            accept=".pdf"
+                            onchange="showFileStatus('status-ijazah', this)"
+                        >
+
+                    </div>
+
+                </div>
+
+                <!-- SK -->
+
+                <div class="upload-item">
+
+                    <div class="upload-item-left">
+
+                        <i class="bi bi-person-vcard upload-icon"></i>
+
+                        <div>
+
+                            <p class="upload-title">
+                                SK Pengalaman Kerja
+                            </p>
+
+                            <p class="upload-subtitle">
+                                Maksimal 5MB
+                            </p>
+
+                            <span
+                                class="file-status"
+                                id="status-sk"
+                            ></span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <button
+                            type="button"
+                            class="btn-upload-action"
+                            onclick="document.getElementById('inputSK').click()"
+                        >
+
+                            <i class="bi bi-upload"></i>
+
+                            Pilih Berkas
+
+                        </button>
+
+                        <input
+                            type="file"
+                            id="inputSK"
+                            hidden
+                            accept=".pdf,.jpg,.png"
+                            onchange="showFileStatus('status-sk', this)"
+                        >
+
+                    </div>
+
+                </div>
+
+                <!-- SERTIFIKAT -->
+
+                <div class="upload-item">
+
+                    <div class="upload-item-left">
+
+                        <i class="bi bi-award upload-icon"></i>
+
+                        <div>
+
+                            <p class="upload-title">
+                                Sertifikat Pendidik
+                            </p>
+
+                            <p class="upload-subtitle">
+                                Maksimal 2MB
+                            </p>
+
+                            <span
+                                class="file-status"
+                                id="status-sertifikat"
+                            ></span>
+
+                        </div>
+
+                    </div>
+
+                    <div>
+
+                        <button
+                            type="button"
+                            class="btn-upload-action"
+                            onclick="document.getElementById('inputSertifikat').click()"
+                        >
+
+                            <i class="bi bi-upload"></i>
+
+                            Pilih Berkas
+
+                        </button>
+
+                        <input
+                            type="file"
+                            id="inputSertifikat"
+                            hidden
+                            accept=".pdf,.jpg,.png"
+                            onchange="showFileStatus('status-sertifikat', this)"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <div class="d-flex justify-content-between mt-4 mb-5 animate-up button-wrapper">
+
+                <button
+                    type="button"
+                    class="btn btn-outline-custom"
+                >
+                    Batal
+                </button>
+
+                <div class="d-flex gap-2 button-group">
+
+                    <button
+                        type="button"
+                        class="btn btn-light-custom"
+                    >
+                        Simpan Draft
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary-custom"
+                        onclick="window.location.href='dashboard_selesai.html'"
+                    >
+
+                        Save & Next
+
+                        <i class="bi bi-arrow-right ms-1"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <script>
+
+        // ================= ANIMATION =================
+
+        document.addEventListener(
+            "DOMContentLoaded",
+            function() {
+
+                const elements =
+                    document.querySelectorAll('.animate-up');
+
+                elements.forEach((el, index) => {
+
+                    setTimeout(() => {
+
+                        el.classList.add('show');
+
+                    }, index * 120);
+
+                });
+
+            }
+        );
+
+        // ================= FILE STATUS =================
+
+        function showFileStatus(statusId, inputElement) {
+
+            const statusLabel =
+                document.getElementById(statusId);
+
+            if(
+                inputElement.files &&
+                inputElement.files.length > 0
+            ) {
+
+                const fileName =
+                    inputElement.files[0].name;
+
+                statusLabel.innerHTML =
+                    `<i class="bi bi-check-circle-fill"></i> ${fileName}`;
+
+                statusLabel.style.display = 'block';
+
+                const btn =
+                    inputElement.previousElementSibling;
+
+                btn.innerHTML =
+                    `<i class="bi bi-pencil-square"></i> Ubah Berkas`;
+
+                btn.classList.add('uploaded');
+            }
+        }
+
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ihsan Tauhid - Notifikasi</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    
+    <style>
+        :root {
+            --sidebar-bg: #035a71;
+            --main-bg: #dce6e9;
+            --text-dark: #033e4d;
+            --text-gray: #64748b;
+            --unread-dot: #035a71;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--main-bg);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- SIDEBAR --- */
+         /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            min-height: 100vh;
+            position: fixed;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+        }
+
+        .sidebar .brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+
+            background-color: white;
+            padding: 6px;
+            border-radius: 10px;
+            margin-right: 12px;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            width: calc(100% - 30px);
+        }
+
+        /* HOVER */
+        .sidebar .nav-link:hover {
+            background-color: rgba(255,255,255,0.08);
+            color: white;
+        }
+
+        /* ACTIVE */
+        .sidebar .nav-link.active {
+            background-color: #1c7388;
+            color: white;
+
+            box-shadow:
+            0 4px 12px rgba(0,0,0,0.12);
+        }
+        /* --- CONTENT AREA --- */
+
+        .main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+
+            margin-left: 260px;
+            width: calc(100% - 260px);
+        }
+
+        /* TOPBAR */
+        .topbar {
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .search-box {
+            background: white;
+            border-radius: 50px;
+            padding: 10px 20px;
+            width: 400px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+        .search-box input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+            font-size: 0.85rem;
+            background: transparent;
+        }
+
+        /* CONTENT BODY */
+        .container-fluid {
+            padding: 20px 60px 80px;
+            max-width: 1200px;
+        }
+
+        .page-header h1 {
+            font-weight: 800;
+            color: var(--text-dark);
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+        .page-header p {
+            color: var(--text-gray);
+            font-size: 0.9rem;
+        }
+
+        /* DIVIDER */
+        .date-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 40px 0 20px;
+        }
+        .date-label {
+            font-size: 0.7rem;
+            font-weight: 800;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            white-space: nowrap;
+        }
+        .date-line {
+            height: 1px;
+            background-color: #cbd5e1;
+            width: 100%;
+        }
+
+        /* NOTIFICATION CARD */
+        .notif-card {
+            background: white;
+            border-radius: 18px;
+            padding: 24px;
+            margin-bottom: 18px;
+            display: flex;
+            gap: 20px;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+            border: 1px solid rgba(255,255,255,0.5);
+        }
+        .icon-circle {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .bg-red-soft { background: #fee2e2; color: #ef4444; }
+        .bg-blue-soft { background: #e0f2fe; color: #0ea5e9; }
+        .bg-gray-soft { background: #f1f5f9; color: #94a3b8; }
+
+        .notif-body { flex-grow: 1; padding-right: 120px; }
+        .notif-title { font-weight: 700; color: #1e293b; margin-bottom: 5px; font-size: 0.95rem; }
+        .notif-text { font-size: 0.88rem; color: #64748b; line-height: 1.6; margin-bottom: 0; }
+
+        /* BUTTONS (Pill Style) */
+        .btn-pill {
+            border-radius: 50px;
+            padding: 8px 24px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .btn-dark-teal { background: #033e4d; color: white; border: none; }
+        .btn-dark-teal:hover { background: #01242d; transform: translateY(-1px); }
+        .btn-outline-custom { background: transparent; border: 1.5px solid #e2e8f0; color: #475569; }
+        .btn-outline-custom:hover { background: #f8fafc; }
+
+        /* META DATA (Time & Dot) */
+        .meta-info {
+            position: absolute;
+            right: 25px;
+            top: 28px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .time-stamp { font-size: 0.75rem; color: #94a3b8; font-weight: 500; }
+        .unread-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--unread-dot);
+            border-radius: 50%;
+        }
+
+        .btn-top {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar p-3">
+        <div class="brand d-flex align-items-center mb-5 mt-2 px-2">
+            <img src="../gambar/yayasan ihsan tauhid.png" alt="Logo" class="sidebar-logo"> 
+            <div>
+                <div class="lh-1">Ihsan Tauhid</div>
+                <small class="fw-normal" style="font-size: 0.65rem;">Management System</small>
+            </div>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i>Data Pendidik/Tendik</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-plus"></i> Data Registrasi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Laporan</a></li>
+            <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-bell"></i> Notifikasi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-gear"></i> Pengaturan</a></li>
+        </ul>
+
+        <a href="#" class="nav-link logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+
+    <div class="main-content">
+        <header class="topbar">
+            <div class="search-box">
+                <i data-lucide="search" size="18" style="color: #94a3b8;"></i>
+                <input type="text" placeholder="Search data or reports...">
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <i data-lucide="bell" size="20" style="color: #ef4444; cursor: pointer;"></i>
+                <div class="text-end d-none d-md-block">
+                    <div style="font-weight: 800; font-size: 0.85rem; color: #033e4d;">Administrator</div>
+                    <div style="font-size: 0.7rem; color: #64748b; font-weight: 500;">NIP: 1985031201112</div>
+                </div>
+                <img src="/gambar/Udah Yappingnya_.jpg" class="rounded-circle border" width="38">
+            </div>
+        </header>
+
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between align-items-end">
+                <div class="page-header">
+                    <h1>Pusat Notifikasi</h1>
+                    <p>Pantau pembaruan dokumen dan aktivitas sistem Anda</p>
+                </div>
+                <div class="d-flex gap-2 mb-2">
+                    <button class="btn btn-light btn-top border"><i data-lucide="filter" size="15"></i> Filter</button>
+                    <button class="btn btn-dark-teal btn-top text-white shadow-sm"><i data-lucide="check-check" size="15"></i> Tandai Semua Dibaca</button>
+                </div>
+            </div>
+
+            <div class="date-group">
+                <span class="date-label">Hari Ini</span>
+                <div class="date-line"></div>
+            </div>
+
+            <div class="notif-card" data-anim="card">
+                <div class="icon-circle bg-red-soft">
+                    <i data-lucide="alert-circle" size="24"></i>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">Dokumen Ijazah Ditolak</div>
+                    <p class="notif-text">
+                        Pemeriksaan sistem menemukan bahwa scan dokumen ijazah S2 tidak terbaca dengan jelas. 
+                        <strong>Mohon lakukan scan ulang dengan resolusi minimal 300 DPI.</strong>
+                    </p>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-pill btn-dark-teal">Upload Ulang</button>
+                        <button class="btn btn-pill btn-outline-custom">Lihat Detail</button>
+                    </div>
+                </div>
+                <div class="meta-info">
+                    <span class="time-stamp">10:45 AM</span>
+                    <div class="unread-dot"></div>
+                </div>
+            </div>
+
+            <div class="notif-card" data-anim="card">
+                <div class="icon-circle bg-blue-soft">
+                    <i data-lucide="file-check-2" size="24"></i>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">Sertifikasi Pendidik Diverifikasi</div>
+                    <p class="notif-text">Selamat! Sertifikasi kompetensi profesional Anda telah berhasil diverifikasi oleh LLDIKTI Wilayah IV.</p>
+                </div>
+                <div class="meta-info">
+                    <span class="time-stamp">08:20 AM</span>
+                    <div class="unread-dot"></div>
+                </div>
+            </div>
+
+            <div class="date-group">
+                <span class="date-label">Kemarin</span>
+                <div class="date-line"></div>
+            </div>
+
+            <div class="notif-card" data-anim="card">
+                <div class="icon-circle bg-gray-soft">
+                    <i data-lucide="refresh-cw" size="24"></i>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">Update Jadwal Pemeliharaan</div>
+                    <p class="notif-text">Portal MIS akan mengalami masa pemeliharaan rutin pada hari Sabtu, jam 22:00 WIB. Beberapa fitur mungkin tidak dapat diakses.</p>
+                </div>
+                <div class="meta-info">
+                    <span class="time-stamp">Kemarin, 14:15</span>
+                </div>
+            </div>
+
+            <div class="notif-card" data-anim="card">
+                <div class="icon-circle bg-blue-soft">
+                    <i data-lucide="user-check" size="24"></i>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">Lengkapi Profil Kepegawaian</div>
+                    <p class="notif-text">Batas akhir pemutakhiran data profil kepegawaian periode Ganjil adalah 3 hari lagi. Pastikan semua data valid.</p>
+                    <button class="btn btn-pill btn-outline-custom">Lengkapi Sekarang</button>
+                </div>
+                <div class="meta-info">
+                    <span class="time-stamp">Kemarin, 09:30</span>
+                </div>
+            </div>
+
+            <div class="date-group">
+                <span class="date-label">Minggu Lalu</span>
+                <div class="date-line"></div>
+            </div>
+
+            <div class="notif-card" data-anim="card">
+                <div class="icon-circle bg-gray-soft">
+                    <i data-lucide="megaphone" size="24"></i>
+                </div>
+                <div class="notif-body">
+                    <div class="notif-title">Pengumuman Hibah Penelitian</div>
+                    <p class="notif-text">Pendaftaran hibah penelitian internal semester genap telah dibuka. Unduh panduan pendaftaran pada menu Dokumen.</p>
+                </div>
+                <div class="meta-info">
+                    <span class="time-stamp">5 Hari Lalu</span>
+                </div>
+            </div>
+
+            <div class="text-center mt-5">
+                <a href="#" class="text-decoration-none" style="color: #035a71; font-weight: 800; font-size: 0.9rem;">Tampilkan Lebih Banyak</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    
+    <script>
+        // Inisialisasi Ikon
+        lucide.createIcons();
+
+        // Animasi Masuk (GSAP)
+        window.addEventListener('DOMContentLoaded', () => {
+            gsap.from(".sidebar", { x: -100, opacity: 0, duration: 0.8, ease: "power2.out" });
+            gsap.from(".topbar", { y: -50, opacity: 0, duration: 0.8, delay: 0.2 });
+            
+            // Animasi Stagger pada kartu notifikasi
+            gsap.from("[data-anim='card']", {
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "power1.out",
+                delay: 0.4
+            });
+
+            gsap.from(".date-group", {
+                width: 0,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2,
+                delay: 0.5
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Data Pendidik & Tendik</title>
+
+    <!-- Bootstrap -->
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <!-- Bootstrap Icon -->
+    <link
+        rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css"
+    >
+
+    <!-- Font -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+
+        :root {
+            --sidebar-bg: #034459;
+            --sidebar-active: #156276;
+            --main-bg: #e2eaf0;
+            --card-bg: #f5f8fa;
+            --primary-color: #034459;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--main-bg);
+            overflow-x: hidden;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            min-height: 100vh;
+            position: fixed;
+            color: rgba(255,255,255,0.7);
+            padding: 16px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            margin-bottom: 50px;
+            margin-top: 10px;
+            padding: 0 8px;
+            color: white;
+        }
+
+        .sidebar-logo {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+            background: white;
+            padding: 6px;
+            border-radius: 10px;
+            margin-right: 12px;
+        }
+
+        .brand-title {
+            font-size: 1rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .brand-subtitle {
+            font-size: 0.65rem;
+            opacity: 0.8;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255,255,255,0.7);
+            border-radius: 10px;
+            margin-bottom: 6px;
+            padding: 12px 15px;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 12px;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            width: calc(100% - 32px);
+        }
+
+        /* ================= MAIN ================= */
+
+        .main-content {
+            margin-left: 260px;
+            padding: 25px 40px;
+        }
+
+        /* ================= TOPBAR ================= */
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .search-wrapper {
+            position: relative;
+        }
+
+        .search-bar {
+            background-color: white;
+            border-radius: 999px;
+            border: none;
+            padding: 10px 20px 10px 42px;
+            width: 320px;
+            font-size: 0.9rem;
+        }
+
+        .search-bar:focus {
+            outline: none;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+        }
+
+        .profile-section {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .profile-info {
+            text-align: right;
+        }
+
+        .profile-name {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+
+        .profile-id {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ================= PAGE ================= */
+
+        .page-title {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: #1a202c;
+            margin-bottom: 6px;
+        }
+
+        .page-subtitle {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 30px;
+        }
+
+        /* ================= STEPPER ================= */
+
+        .stepper {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            margin: 40px 0;
+            padding: 0 40px;
+        }
+
+        .stepper::before {
+            content: '';
+            position: absolute;
+            top: 16px;
+            left: 60px;
+            right: 60px;
+            height: 2px;
+            background-color: #d7dee5;
+            z-index: 1;
+        }
+
+        .step {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        .step-circle {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #cbd5e1;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            font-weight: 700;
+        }
+
+        .step.active .step-circle {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            color: white;
+            box-shadow: 0 0 0 4px rgba(3,68,89,0.18);
+        }
+
+        .step-text {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .step.active .step-text {
+            color: var(--primary-color);
+        }
+
+        /* ================= CARD ================= */
+
+        .form-card {
+            background-color: var(--card-bg);
+            border-radius: 18px;
+            border: 1px solid rgba(0,0,0,0.04);
+            padding: 25px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .card-icon-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 22px;
+        }
+
+        .card-icon {
+            width: 38px;
+            height: 38px;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 14px;
+        }
+
+        .card-title-custom {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .card-subtitle-custom {
+            margin: 0;
+            font-size: 0.74rem;
+            color: var(--text-muted);
+        }
+
+        /* ================= FORM ================= */
+
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-control,
+        .form-select {
+            background-color: white;
+            border: 1px solid #d4dbe3;
+            padding: 11px 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            transition: 0.2s ease;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.2rem rgba(3,68,89,0.10);
+        }
+
+        .custom-textarea {
+            resize: none;
+            min-height: 110px;
+        }
+
+        /* ================= PHONE INPUT ================= */
+
+        .custom-input-group {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .phone-code {
+            background: white;
+            border-right: none;
+            font-weight: 700;
+            color: var(--primary-color);
+            padding-left: 14px;
+            padding-right: 14px;
+        }
+
+        .custom-input-group .form-control {
+            border-left: none;
+        }
+
+        .custom-input-group .form-control:focus {
+            box-shadow: none;
+        }
+
+        /* ================= RADIO CARD ================= */
+
+        .radio-card {
+            position: relative;
+            border: 1.5px solid #d9e3ea;
+            border-radius: 16px;
+            padding: 18px;
+            cursor: pointer;
+            background: white;
+            transition: all 0.25s ease;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .radio-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(
+                135deg,
+                rgba(3,68,89,0.03),
+                rgba(21,98,118,0.06)
+            );
+            opacity: 0;
+            transition: opacity 0.25s ease;
+        }
+
+        .radio-card:hover {
+            border-color: var(--primary-color);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(3,68,89,0.10);
+        }
+
+        .radio-card:hover::before {
+            opacity: 1;
+        }
+
+        .radio-card.selected {
+            background-color: #f0f7f9;
+            border-color: var(--primary-color);
+            box-shadow: 0 12px 24px rgba(3,68,89,0.12);
+        }
+
+        .radio-card.selected::before {
+            opacity: 1;
+        }
+
+        .radio-card .form-check-input {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            border: 2px solid #cbd5e1;
+        }
+
+        .radio-card .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        .radio-title {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1e293b;
+            margin-bottom: 3px;
+        }
+
+        .radio-subtitle {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* ================= BUTTON ================= */
+
+        .btn-custom-outline {
+            background-color: transparent;
+            border: 1px solid #cbd5e1;
+            color: #475569;
+            padding: 10px 24px;
+            border-radius: 10px;
+            transition: 0.2s ease;
+        }
+
+        .btn-custom-outline:hover {
+            background-color: #eef2f7;
+        }
+
+        .btn-custom-light {
+            background-color: white;
+            color: var(--primary-color);
+            border: 1px solid #dbe3eb;
+            padding: 10px 24px;
+            border-radius: 10px;
+            transition: 0.2s ease;
+        }
+
+        .btn-custom-light:hover {
+            background-color: #f8fafc;
+        }
+
+        .btn-custom-primary {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 10px;
+            transition: 0.2s ease;
+            box-shadow: 0 8px 16px rgba(3,68,89,0.15);
+        }
+
+        .btn-custom-primary:hover {
+            background-color: #04556d;
+            transform: translateY(-2px);
+        }
+
+        .btn:focus,
+        .btn:active {
+            box-shadow: none !important;
+        }
+
+        /* ================= ANIMATION ================= */
+
+        .animate-up {
+            opacity: 0;
+            transform: translateY(25px);
+            transition:
+                opacity 0.6s ease,
+                transform 0.6s ease;
+        }
+
+        .animate-up.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 992px) {
+
+            .sidebar {
+                width: 90px;
+            }
+
+            .brand-text,
+            .sidebar .nav-link span {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 90px;
+                padding: 20px;
+            }
+
+            .search-bar {
+                width: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 18px;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 16px;
+            }
+
+            .search-bar {
+                width: 100%;
+            }
+
+            .stepper {
+                padding: 0;
+                gap: 10px;
+            }
+
+            .step-text {
+                font-size: 0.68rem;
+            }
+
+            .button-group {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .button-group .btn {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+
+    <aside class="sidebar">
+
+        <div class="brand">
+
+            <img
+                src="../gambar/yayasan ihsan tauhid.png"
+                alt="Logo"
+                class="sidebar-logo"
+            >
+
+            <div class="brand-text">
+
+                <div class="brand-title">
+                    Ihsan Tauhid
+                </div>
+
+                <div class="brand-subtitle">
+                    Management System
+                </div>
+
+            </div>
+
+        </div>
+
+        <ul class="nav flex-column">
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-grid-1x2"></i>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link active" href="#">
+                    <i class="bi bi-people"></i>
+                    <span>Data Pendidik/Tendik</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Data Registrasi</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-bar-chart"></i>
+                    <span>Laporan</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-bell"></i>
+                    <span>Notifikasi</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="bi bi-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </li>
+
+        </ul>
+
+        <a href="#" class="nav-link logout-btn">
+            <i class="bi bi-box-arrow-right"></i>
+            <span>Logout</span>
+        </a>
+
+    </aside>
+
+    <!-- MAIN -->
+
+    <main class="main-content">
+
+        <!-- TOPBAR -->
+
+        <div class="topbar">
+
+            <div class="search-wrapper">
+
+                <i class="bi bi-search search-icon"></i>
+
+                <input
+                    type="text"
+                    class="search-bar"
+                    placeholder="Search data or reports..."
+                >
+
+            </div>
+
+            <div class="profile-section">
+
+                <button class="btn btn-link text-dark position-relative">
+
+                    <i class="bi bi-bell fs-5"></i>
+
+                    <span
+                        class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle"
+                    ></span>
+
+                </button>
+
+                <div class="profile-info">
+
+                    <div class="profile-name">
+                        Administrator
+                    </div>
+
+                    <div class="profile-id">
+                        NIP: 1985031201112
+                    </div>
+
+                </div>
+
+                <img
+                    src="/gambar/Udah Yappingnya_.jpg"
+                    alt="Profile"
+                    class="rounded-circle"
+                    width="42"
+                    height="42"
+                >
+
+            </div>
+
+        </div>
+
+        <!-- HEADER -->
+
+        <h2 class="page-title">
+            Tambah Data Pendidik & Tendik
+        </h2>
+
+        <p class="page-subtitle">
+            Kelola data guru, staf administrasi,
+            dan tenaga kependidikan lainnya.
+        </p>
+
+        <!-- STEPPER -->
+
+        <div class="stepper animate-up">
+
+            <div class="step active">
+
+                <div class="step-circle">1</div>
+
+                <div class="step-text">
+                    Identitas Diri
+                </div>
+
+            </div>
+
+            <div class="step">
+
+                <div class="step-circle">2</div>
+
+                <div class="step-text">
+                    Kualifikasi
+                </div>
+
+            </div>
+
+            <div class="step">
+
+                <div class="step-circle">3</div>
+
+                <div class="step-text">
+                    Unggah Berkas
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FORM -->
+
+        <form id="tambahDataForm">
+
+            <!-- INFORMASI AKUN -->
+
+            <div class="form-card animate-up">
+
+                <div class="card-icon-header">
+
+                    <div class="card-icon">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="card-title-custom">
+                            Informasi Akun
+                        </h5>
+
+                        <p class="card-subtitle-custom">
+                            Buat nama pengguna dan kata sandi.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nama Pengguna
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Masukkan nama pengguna"
+                        >
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Kata Sandi
+                        </label>
+
+                        <div class="input-group">
+
+                            <span class="input-group-text bg-white border-end-0">
+                                <i class="bi bi-lock text-muted"></i>
+                            </span>
+
+                            <input
+                                type="password"
+                                class="form-control border-start-0 border-end-0"
+                                id="passwordInput"
+                                placeholder="••••••••"
+                            >
+
+                            <span
+                                class="input-group-text bg-white border-start-0"
+                                style="cursor:pointer;"
+                                id="togglePassword"
+                            >
+
+                                <i class="bi bi-eye text-muted"></i>
+
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFORMASI PERSONAL -->
+
+            <div class="form-card animate-up">
+
+                <div class="card-icon-header">
+
+                    <div class="card-icon">
+                        <i class="bi bi-card-heading"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="card-title-custom">
+                            Informasi Personal
+                        </h5>
+
+                        <p class="card-subtitle-custom">
+                            Data sesuai kartu identitas resmi
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3 mb-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nama Lengkap
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Masukkan nama lengkap"
+                        >
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            NIK
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            maxlength="16"
+                            placeholder="16 digit nomor NIK"
+                        >
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Tempat Lahir
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="Kota/Kabupaten"
+                        >
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Tanggal Lahir
+                        </label>
+
+                        <input
+                            type="date"
+                            class="form-control"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- KONTAK -->
+
+            <div class="form-card animate-up">
+
+                <div class="card-icon-header">
+
+                    <div class="card-icon">
+                        <i class="bi bi-geo-alt-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="card-title-custom">
+                            Kontak & Domisili
+                        </h5>
+
+                        <p class="card-subtitle-custom">
+                            Informasi alamat dan kontak aktif
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Alamat Domisili
+                    </label>
+
+                    <textarea
+                        class="form-control custom-textarea"
+                        placeholder="Jl. Contoh No.123"
+                    ></textarea>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Nomor HP
+                        </label>
+
+                        <div class="input-group custom-input-group">
+
+                            <span class="input-group-text phone-code">
+                                +62
+                            </span>
+
+                            <input
+                                type="tel"
+                                class="form-control"
+                                placeholder="8123456789"
+                            >
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Email
+                        </label>
+
+                        <input
+                            type="email"
+                            class="form-control"
+                            placeholder="nama@email.com"
+                        >
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- STATUS -->
+
+            <div class="form-card animate-up">
+
+                <div class="card-icon-header">
+
+                    <div class="card-icon">
+                        <i class="bi bi-briefcase-fill"></i>
+                    </div>
+
+                    <div>
+
+                        <h5 class="card-title-custom">
+                            Status Kepegawaian
+                        </h5>
+
+                        <p class="card-subtitle-custom">
+                            Pilih status pegawai
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="radio-card d-flex align-items-center"
+                            onclick="selectRadio(this, 'pns')"
+                        >
+
+                            <div class="form-check me-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="statusPegawai"
+                                    id="pns"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <div class="radio-title">
+                                    PNS / PPPK
+                                </div>
+
+                                <div class="radio-subtitle">
+                                    ASN aktif Pemerintah
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="radio-card d-flex align-items-center"
+                            onclick="selectRadio(this, 'gty')"
+                        >
+
+                            <div class="form-check me-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="statusPegawai"
+                                    id="gty"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <div class="radio-title">
+                                    GTY / PTY
+                                </div>
+
+                                <div class="radio-subtitle">
+                                    Pegawai Tetap Yayasan
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <div
+                            class="radio-card d-flex align-items-center"
+                            onclick="selectRadio(this, 'honor')"
+                        >
+
+                            <div class="form-check me-3">
+
+                                <input
+                                    class="form-check-input"
+                                    type="radio"
+                                    name="statusPegawai"
+                                    id="honor"
+                                >
+
+                            </div>
+
+                            <div>
+
+                                <div class="radio-title">
+                                    Guru Honor
+                                </div>
+
+                                <div class="radio-subtitle">
+                                    Tenaga Kerja Lepas
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- BUTTON -->
+
+            <div class="d-flex justify-content-between mt-4 mb-5 button-group">
+
+                <button
+                    type="button"
+                    class="btn btn-custom-outline"
+                >
+                    Batal
+                </button>
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="button"
+                        class="btn btn-custom-light"
+                    >
+                        Simpan Draft
+                    </button>
+
+                    <button
+                        type="button"
+                        class="btn btn-custom-primary"
+                        onclick="window.location.href='dashboard_tambah_data_2.html'"
+                    >
+
+                        Save & Next
+
+                        <i class="bi bi-arrow-right ms-1"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+
+        // ================= PASSWORD =================
+
+        const togglePassword =
+            document.getElementById('togglePassword');
+
+        const passwordInput =
+            document.getElementById('passwordInput');
+
+        togglePassword.addEventListener('click', function () {
+
+            const type =
+                passwordInput.getAttribute('type') === 'password'
+                ? 'text'
+                : 'password';
+
+            passwordInput.setAttribute('type', type);
+
+            const icon = this.querySelector('i');
+
+            icon.classList.toggle('bi-eye');
+
+            icon.classList.toggle('bi-eye-slash');
+
+        });
+
+        // ================= RADIO =================
+
+        function selectRadio(element, radioId) {
+
+            document.querySelectorAll('.radio-card')
+                .forEach(card => {
+
+                    card.classList.remove('selected');
+
+                });
+
+            element.classList.add('selected');
+
+            document.getElementById(radioId).checked = true;
+
+            element.animate(
+                [
+                    { transform: 'scale(0.98)' },
+                    { transform: 'scale(1)' }
+                ],
+                {
+                    duration: 180,
+                    easing: 'ease-out'
+                }
+            );
+        }
+
+        // ================= ANIMATION =================
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const animateElements =
+                document.querySelectorAll('.animate-up');
+
+            setTimeout(() => {
+
+                animateElements.forEach((el) => {
+
+                    el.classList.add('show');
+
+                });
+
+            }, 120);
+
+        });
+
+    </script>
+
+</body>
+</html>

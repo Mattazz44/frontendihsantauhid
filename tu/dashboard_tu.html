@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Statistik Yayasan - Ihsan Tauhid</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        :root {
+            --sidebar-bg: #034459;
+            --sidebar-active: #156276;
+            --main-bg: #e2eaf0;
+            --card-bg: #f8fafc;
+            --primary-color: #034459;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --accent-green: #10b981;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--main-bg);
+            overflow-x: hidden;
+            margin: 0;
+            color: var(--text-main);
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            width: 260px;
+            background-color: var(--sidebar-bg);
+            min-height: 100vh;
+            position: fixed;
+            color: rgba(255, 255, 255, 0.7);
+            z-index: 1000;
+        }
+
+        .sidebar .brand {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.7);
+            border-radius: 8px;
+            margin-bottom: 5px;
+            padding: 10px 15px;
+            transition: all 0.3s;
+        }
+
+        .sidebar .nav-link:hover, .sidebar .nav-link.active {
+            background-color: var(--sidebar-active);
+            color: white;
+        }
+
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .sidebar-logo {
+            width: 42px;
+            height: 42px;
+            object-fit: contain;
+
+            background-color: white;
+            padding: 6px;
+            border-radius: 10px;
+            margin-right: 12px;
+
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            width: calc(100% - 30px);
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 260px;
+            padding: 20px 40px;
+        }
+
+        /* Topbar */
+        .search-bar {
+            background-color: white;
+            border-radius: 20px;
+            border: none;
+            padding: 8px 20px 8px 40px;
+            width: 350px;
+            font-size: 0.9rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+
+        /* Dashboard Header */
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .btn-action-top {
+            background-color: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-export {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Stat Cards */
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid rgba(0,0,0,0.03);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            background-color: #e2eaf0;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-color);
+            font-size: 1.2rem;
+        }
+
+        .stat-badge {
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+        
+        .badge-green { background-color: #dcfce7; color: #166534; }
+        .badge-gray { background-color: #f1f5f9; color: #475569; }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 15px;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            line-height: 1;
+            margin-bottom: 15px;
+        }
+
+        .stat-footer {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        /* Chart Cards */
+        .chart-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(0,0,0,0.03);
+            height: 100%;
+        }
+
+        .chart-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 5px;
+        }
+
+        .chart-subtitle {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        /* Gender Chart Custom Info */
+        .gender-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .gender-info .label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-main);
+            font-weight: 500;
+        }
+        
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+        }
+
+        .btn-detail {
+            width: 100%;
+            background-color: white;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-top: 20px;
+            transition: all 0.2s;
+        }
+
+        .btn-detail:hover {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        /* Table Card */
+        .table-card {
+            background-color: var(--card-bg);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(0,0,0,0.03);
+            margin-top: 25px;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 10px;
+        }
+
+        .table-custom th {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 600;
+            padding: 10px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table-custom td {
+            padding: 15px;
+            vertical-align: middle;
+            font-size: 0.9rem;
+            color: var(--text-main);
+            background-color: transparent;
+        }
+
+        .avatar-initial {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #e2eaf0;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+            margin-right: 12px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-verified { background-color: #dcfce7; color: #16a34a; }
+        .status-pending { background-color: #fef9c3; color: #eab308; }
+        .status-review { background-color: #dbeafe; color: #2563eb; }
+
+        /* Animation */
+        .animate-up {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s ease-out;
+        }
+        .animate-up.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="sidebar p-3">
+        <div class="brand d-flex align-items-center mb-5 mt-2 px-2">
+            <img src="../gambar/yayasan ihsan tauhid.png" alt="Logo" class="sidebar-logo"> 
+            <div>
+                <div class="lh-1">Ihsan Tauhid</div>
+                <small class="fw-normal" style="font-size: 0.65rem;">Management System</small>
+            </div>
+        </div>
+
+        <ul class="nav flex-column">
+            <li class="nav-item"><a class="nav-link active" href="#"><i class="bi bi-grid-1x2"></i> Dashboard</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-people"></i>Data Pendidik/Tendik</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-person-plus"></i> Data Registrasi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bar-chart"></i> Laporan</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-bell"></i> Notifikasi</a></li>
+            <li class="nav-item"><a class="nav-link" href="#"><i class="bi bi-gear"></i> Pengaturan</a></li>
+        </ul>
+
+        <a href="#" class="nav-link logout-btn"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+
+    <div class="main-content">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <div class="position-relative">
+                <i class="bi bi-search search-icon"></i>
+                <input type="text" class="search-bar" placeholder="Search data or reports...">
+            </div>
+            <div class="d-flex align-items-center">
+                <button class="btn btn-link text-dark position-relative me-3">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="position-absolute top-25 start-75 translate-middle p-1 bg-danger border border-light rounded-circle"></span>
+                </button>
+                <div class="text-end me-2">
+                    <div class="fw-bold lh-1" style="font-size: 0.85rem;">Administrator</div>
+                    <small class="text-muted" style="font-size: 0.75rem;">NIP: 1985031201112</small>
+                </div>
+                <img src="/gambar/Udah Yappingnya_.jpg" alt="Profile" class="rounded-circle" width="38">
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-end mb-4 animate-up">
+            <div>
+                <h1 class="page-title">Statistik Yayasan</h1>
+                <p class="page-subtitle">Ringkasan data tenaga pendidik dan kependidikan terpusat.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn-action-top"><i class="bi bi-calendar4"></i> Akademik 2023/2024</button>
+                <button class="btn-export"><i class="bi bi-download"></i> Export PDF</button>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-3 animate-up" style="transition-delay: 0.1s;">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="icon-box"><i class="bi bi-mortarboard"></i></div>
+                        <span class="stat-badge badge-green">+12%</span>
+                    </div>
+                    <div>
+                        <p class="stat-title">Total Guru</p>
+                        <h3 class="stat-value">142</h3>
+                        <p class="stat-footer">Aktif mengajar semester ini</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate-up" style="transition-delay: 0.2s;">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="icon-box"><i class="bi bi-person-video3"></i></div>
+                        <span class="stat-badge badge-green">+5%</span>
+                    </div>
+                    <div>
+                        <p class="stat-title">Tenaga Pendidik</p>
+                        <h3 class="stat-value">128</h3>
+                        <p class="stat-footer">Sertifikasi & Non-Sertifikasi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate-up" style="transition-delay: 0.3s;">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="icon-box"><i class="bi bi-shield-check"></i></div>
+                        <span class="stat-badge badge-gray">Stable</span>
+                    </div>
+                    <div>
+                        <p class="stat-title">Tenaga Kependidikan</p>
+                        <h3 class="stat-value">14</h3>
+                        <p class="stat-footer">Staf TU & Operasional</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 animate-up" style="transition-delay: 0.4s;">
+                <div class="stat-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div class="icon-box"><i class="bi bi-person-plus"></i></div>
+                    </div>
+                    <div>
+                        <p class="stat-title">Registrasi Baru</p>
+                        <h3 class="stat-value">28</h3>
+                        <p class="stat-footer">Pending verifikasi berkas</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-8 animate-up" style="transition-delay: 0.5s;">
+                <div class="chart-card">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <h5 class="chart-title">Distribusi Jenjang Pendidikan</h5>
+                            <p class="chart-subtitle">Perbandingan jumlah personil per tingkat sekolah</p>
+                        </div>
+                    </div>
+                    <div style="height: 250px; width: 100%;">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 animate-up" style="transition-delay: 0.6s;">
+                <div class="chart-card d-flex flex-column">
+                    <h5 class="chart-title mb-4">Gender Profil</h5>
+                    
+                    <div class="position-relative mx-auto mt-2" style="width: 160px; height: 160px;">
+                        <canvas id="doughnutChart"></canvas>
+                        <div class="position-absolute top-50 start-50 translate-middle text-center">
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color); line-height: 1;">142</div>
+                            <div style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; letter-spacing: 1px;">TOTAL</div>
+                        </div>
+                    </div>
+
+                    <div class="mt-auto pt-4">
+                        <div class="gender-info">
+                            <div class="label"><div class="dot" style="background-color: #034459;"></div> Laki-laki</div>
+                            <div class="fw-bold">78 <span class="text-muted fw-normal ms-1">(55%)</span></div>
+                        </div>
+                        <div class="gender-info mt-2 mb-3">
+                            <div class="label"><div class="dot" style="background-color: #93c5fd;"></div> Perempuan</div>
+                            <div class="fw-bold">64 <span class="text-muted fw-normal ms-1">(45%)</span></div>
+                        </div>
+                        <button class="btn-detail">Detail Profil Personil</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="table-card animate-up" style="transition-delay: 0.7s;">
+            <div class="table-header">
+                <h5 class="chart-title m-0">Registrasi Terbaru</h5>
+                <a href="#" class="text-decoration-none" style="font-size: 0.85rem; color: var(--text-muted);">Lihat Semua ></a>
+            </div>
+            <div class="table-responsive">
+                <table class="table-custom">
+                    <thead>
+                        <tr>
+                            <th>Nama Lengkap</th>
+                            <th>Unit/Tujuan</th>
+                            <th>Posisi</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-initial">AM</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Ahmad Maulana, S.Pd</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">ID: 202300412</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>SMA Ihsan Tauhid</td>
+                            <td>Guru Matematika</td>
+                            <td><span class="status-badge status-verified">VERIFIED</span></td>
+                            <td><i class="bi bi-three-dots-vertical text-muted" style="cursor:pointer;"></i></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-initial">SF</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Siti Fatimah, M.Pd</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">ID: 202300415</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>SD Ihsan Tauhid</td>
+                            <td>Wali Kelas 4</td>
+                            <td><span class="status-badge status-pending">PENDING</span></td>
+                            <td><i class="bi bi-three-dots-vertical text-muted" style="cursor:pointer;"></i></td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar-initial">RH</div>
+                                    <div>
+                                        <div class="fw-bold text-dark">Rudi Hermawan</div>
+                                        <div style="font-size: 0.75rem; color: var(--text-muted);">ID: 202300418</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>Yayasan / Pusat</td>
+                            <td>Staff IT</td>
+                            <td><span class="status-badge status-review">ON REVIEW</span></td>
+                            <td><i class="bi bi-three-dots-vertical text-muted" style="cursor:pointer;"></i></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Animations
+        document.addEventListener("DOMContentLoaded", function() {
+            const elements = document.querySelectorAll('.animate-up');
+            elements.forEach((el) => {
+                setTimeout(() => { el.classList.add('show'); }, 50);
+            });
+        });
+
+        // Chart.js Default Font
+        Chart.defaults.font.family = "'Inter', sans-serif";
+
+        // Bar Chart Initialization
+        const ctxBar = document.getElementById('barChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Unit SD', 'Unit SMP', 'Unit SMA', 'Unit SMK'],
+                datasets: [
+                    {
+                        label: 'Guru',
+                        data: [25, 35, 20, 24],
+                        backgroundColor: '#034459',
+                        borderRadius: 6,
+                        barPercentage: 0.9,
+                        categoryPercentage: 0.95
+                    },
+                    {
+                        label: 'Tendik',
+                        data: [5, 8, 12, 10],
+                        backgroundColor: '#93c5fd', // Light blue
+                        borderRadius: 6,
+                        barPercentage: 0.9,
+                        categoryPercentage: 0.95
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            usePointStyle: true,
+                            boxWidth: 8,
+                            padding: 20,
+                            font: { size: 12, weight: '500' }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        display: false // Hide Y axis like in the image
+                    },
+                    x: {
+                        grid: { display: false, drawBorder: false },
+                        ticks: { font: { weight: '500' }, color: '#64748b' }
+                    }
+                }
+            }
+        });
+
+        // Doughnut Chart Initialization
+        const ctxDoughnut = document.getElementById('doughnutChart').getContext('2d');
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Laki-laki', 'Perempuan'],
+                datasets: [{
+                    data: [55, 45],
+                    backgroundColor: ['#034459', '#93c5fd'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '75%', // Thickness of the doughnut
+                plugins: {
+                    legend: { display: false }, // Hide default legend
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.label + ': ' + context.raw + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
